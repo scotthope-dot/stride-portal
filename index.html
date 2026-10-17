@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stride Together CIC - Web Portal & Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <style>
+    :root {
+      --primary-navy: #1F4E78;
+      --accent-teal: #00A8C6;
+      --muted-cyan: #4BA0B4;
+      --dark-slate: #0F172A;
+      --light-bg: #FFFFFF;
+      --card-bg: #F8FAFC;
+      --border-color: #E2E8F0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--light-bg); color: var(--dark-slate); line-height: 1.6; }
+
+    header {
+      background-color: var(--primary-navy);
+      color: white;
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-logo {
+      height: 48px;
+      width: auto;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+
+    .brand h1 { font-size: 1.4rem; font-weight: 700; }
+    .brand span { color: var(--accent-teal); }
+
+    .btn-donate {
+      background-color: var(--accent-teal);
+      color: white;
+      padding: 0.6rem 1.4rem;
+      border-radius: 6px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+    .btn-donate:hover { background-color: #008da6; }
+
+    nav {
+      background-color: #F1F5F9;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      display: flex;
+      gap: 0.35rem;
+      overflow-x: auto;
+    }
+
+    .nav-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      padding: 0.35rem 0.65rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--primary-navy);
+      white-space: nowrap;
+    }
+
+    .nav-btn.active, .nav-btn:hover {
+      background-color: var(--primary-navy);
+      color: white;
+    }
+
+    main { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+
+    .section-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-card h2 {
+      color: var(--primary-navy);
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--accent-teal);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 1rem;
+    }
+
+    .form-group input[readonly] {
+      background-color: #E2E8F0;
+      color: #475569;
+      cursor: not-allowed;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    .checkbox-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .checkbox-item { display: flex; align-items: center; gap: 0.5rem; font-weight: normal; }
+
+    .privacy-notice-box {
+      background-color: #E0F2FE;
+      border: 1px solid #BAE6FD;
+      color: #0369A1;
+      padding: 1rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
+    .btn-submit {
+      background-color: var(--primary-navy);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-submit:hover { background-color: var(--dark-slate); }
+    .btn-submit:disabled { background-color: #94A3B8; cursor: not-allowed; }
+
+    .status-msg { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none; font-weight: 600; }
+    .status-success { background-color: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+    .status-error { background-color: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+
+    .dashboard-header-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      color: var(--primary-navy);
+      white-space: nowrap;
+    }
+
+    .filter-group select {
+      padding: 0.45rem 0.8rem;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      font-weight: 600;
+      color: var(--dark-slate);
+    }
+
+    .active-filter-banner {
+      background-color: #E0F2FE;
+      border: 1px solid #BAE6FD;
+      color: #0369A1;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .active-filter-banner button {
+      background: none;
+      border: none;
+      color: #0369A1;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .kpi-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Pushes title to top and number to bottom */
+      min-height: 110px; /* Ensures identical height for all cards */
+    }
+
+    .kpi-title { 
+      font-size: 0.75rem; 
+      color: #64748B; 
+      font-weight: 600; 
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+
+    .kpi-value { 
+      font-size: 1.5rem; 
+      font-weight: 700; 
+      color: var(--primary-navy); 
+      margin-top: 0.5rem; 
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .charts-grid { grid-template-columns: 1fr; }
+      .form-row, .form-row-3 { grid-template-columns: 1fr; }
+    }
+
+    .chart-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+    }
+
+    .chart-card h3 { 
+      color: var(--primary-navy); 
+      margin-bottom: 0.75rem; 
+      font-size: 0.95rem; 
+    }
+
+    .chart-container-sm {
+      position: relative;
+      height: 200px;
+      width: 100%;
+    }
+
+    .chart-container-md {
+      position: relative;
+      height: 220px;
+      width: 100%;
+    }
+
+    .loading { 
+      text-align: center; 
+      padding: 3rem; 
+      color: var(--primary-navy); 
+      font-size: 1.1rem; 
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--border-color);
+      border-top: 4px solid var(--accent-teal);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    footer { text-align: center; padding: 2rem; color: #64748B; border-top: 1px solid var(--border-color); margin-top: 3rem; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together Logo" class="brand-logo">
+      <h1>Stride Together <span>CIC</span></h1>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1.25rem;">
+      <span style="font-size: 0.85rem; max-width: 340px; text-align: right; line-height: 1.3; opacity: 0.95;">
+        Help us keep sessions free for everyone. Any donation, big or small, makes a difference. Thankyou.
+      </span>
+      <!-- Replace with Co-op Bank payment link when ready -->
+      <a href="YOUR_COOP_BANK_PAYMENT_LINK_HERE" target="_blank" class="btn-donate" style="white-space: nowrap;">Donate</a>
+    </div>
+  </header>
+
+  <nav id="topNav">
+    <button class="nav-btn active" data-view="dashboard">Performance Dashboard</button>
+    <button class="nav-btn" data-view="sessions-list">View Sessions Log</button>
+    <button class="nav-btn" data-view="volunteer">[Form] Sessions Log</button>
+    <button class="nav-btn" data-view="health-check">[Form] Health (PAR-Q) & Registration</button>
+    <button class="nav-btn" data-view="feedback">[Form] Participant Feedback</button>
+    <button class="nav-btn" data-view="questionnaire">[Form] Client Intake Questionnaire</button>
+    <button class="nav-btn" data-view="staff">[Form] Grant Spend Tracker</button>
+    <button class="nav-btn" data-view="board">[Form] Governance Log</button>
+    <button class="nav-btn" data-view="merch">Community Merch Store</button>
+  </nav>
+
+  <main>
+    <!-- TAB 0: LIVE PERFORMANCE DASHBOARD -->
+    <section id="view-dashboard" class="section-card">
+      <div class="dashboard-header-controls">
+        <h2>Live Performance Dashboard</h2>
+        
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <div class="filter-group">
+            <label for="monthFilter">Month:</label>
+            <select id="monthFilter" onchange="applyFilters()">
+              <option value="ALL">All Months</option>
+            </select>
+          </div>
+          <button class="btn-submit" style="width: auto; padding: 0.4rem 0.9rem; font-size: 0.9rem;" onclick="loadDashboardData(true)">Refresh Data</button>
+        </div>
+      </div>
+
+      <div id="activeFilterBanner" class="active-filter-banner" style="display: none;">
+        <span>Active Drill-Down Filter: <strong id="filterCriteriaText">None</strong></span>
+        <button onclick="clearDrillDownFilter()">Clear Filter</button>
+      </div>
+
+      <div id="dash-loading" class="loading">
+        <div class="spinner"></div>
+        <span>Collecting latest session data from Google Sheets... Please wait.</span>
+      </div>
+
+      <div id="dash-content" style="display: none;">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-title">Total Participants</div>
+            <div class="kpi-value" id="kpi-total-parts">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Total Activity Sessions</div>
+            <div class="kpi-value" id="kpi-sessions">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Average Participants / Session</div>
+            <div class="kpi-value" id="kpi-avg-parts">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Hours Delivered</div>
+            <div class="kpi-value" id="kpi-hours">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Wellbeing Impact Score (WIS)</div>
+            <div class="kpi-value" id="kpi-wis">0.0</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Total Participants by Location (Click to Filter)</h3>
+            <div class="chart-container-sm">
+              <canvas id="locationChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>Total Participants by Group / Activity (Click to Filter)</h3>
+            <div class="chart-container-sm">
+              <canvas id="activityChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Month-by-Month Participants by Location & Overall Trend (Click Month/Bar to Filter)</h3>
+          <div class="chart-container-md">
+            <canvas id="monthlyTrendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Average Group Size by Activity (Click to Filter)</h3>
+          <div class="chart-container-md">
+            <canvas id="avgGroupChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: SESSIONS LOG TABLE VIEW -->
+    <section id="view-sessions-list" class="section-card" style="display: none;">
+      <div class="dashboard-header-controls">
+        <h2>Sessions Activity Log</h2>
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="sessionTableSearch" placeholder="🔍 Search sessions, leads, locations..." oninput="filterSessionTable()" style="padding: 0.45rem 0.8rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.9rem; min-width: 220px;">
+          <button class="btn-submit" style="width: auto; padding: 0.4rem 0.9rem; font-size: 0.9rem;" onclick="loadDashboardData(true)">Refresh Sheet Data</button>
+        </div>
+      </div>
+
+      <p style="margin-bottom: 1.25rem; color: #475569; font-size: 0.9rem;">
+        Showing all session entries logged in Google Sheets. Use the search box above to filter by lead, group, or location.
+      </p>
+
+      <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; max-height: 550px;">
+        <table id="sessionsTable" style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+          <thead>
+            <tr style="background-color: var(--primary-navy); color: white; position: sticky; top: 0; z-index: 10;">
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Date</th>
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Location</th>
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Day / Time</th>
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Activity Group</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">Total Parts</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">Returning</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">New</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">Vols / Staff</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">Hours</th>
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Activity Lead</th>
+              <th style="padding: 0.75rem 1rem;">Notes / Feedback</th>
+            </tr>
+          </thead>
+          <tbody id="sessionsTableBody">
+            <tr>
+              <td colspan="11" style="text-align: center; padding: 2rem; color: #64748B;">
+                Loading session data...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 1: SESSIONS LOG FORM -->
+    <section id="view-volunteer" class="section-card" style="display: none;">
+      <h2>Input Session Data Log</h2>
+      <form onsubmit="submitForm(event, 'sessionLog', 'status-vol')">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sess_date">Session Date</label>
+            <input type="date" id="sess_date" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_location">Location</label>
+            <select id="sess_location" required>
+              <option value="Dover">Dover</option>
+              <option value="Folkestone">Folkestone</option>
+              <option value="Thanet">Thanet</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sess_dayTime">Day / Time</label>
+            <select id="sess_dayTime" required>
+              <option value="Weds Evening">Weds Evening</option>
+              <option value="Tues Evening">Tues Evening</option>
+              <option value="Sat Morning">Sat Morning</option>
+              <option value="Sun Morning">Sun Morning</option>
+              <option value="Weekday Morning">Weekday Morning</option>
+              <option value="Weekday Afternoon">Weekday Afternoon</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sess_group">Group / Activity</label>
+            <select id="sess_group" required>
+              <option value="Running Group">Running Group</option>
+              <option value="Walking Group">Walking Group</option>
+              <option value="Teenage Group">Teenage Group</option>
+              <option value="Cycling Group">Cycling Group</option>
+              <option value="Hyrox">Hyrox</option>
+              <option value="ParkRun">ParkRun</option>
+              <option value="Coffee Catchup">Coffee Catchup</option>
+              <option value="Social Meetup">Social Meetup</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="sess_totalParts">Total Participants</label>
+            <input type="number" id="sess_totalParts" min="0" placeholder="e.g. 7" oninput="calcNewParticipants()" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_returningParts">Returning Participants</label>
+            <input type="number" id="sess_returningParts" min="0" placeholder="e.g. 6" oninput="calcNewParticipants()" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_newParts">New Participants (Auto)</label>
+            <input type="number" id="sess_newParts" min="0" placeholder="0" readonly required>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="sess_volunteers">Volunteers / Staff</label>
+            <input type="number" id="sess_volunteers" min="1" placeholder="e.g. 1" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_hours">Hours Delivered</label>
+            <input type="number" id="sess_hours" step="0.25" placeholder="e.g. 1" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_lead">Activity Lead / Instructor</label>
+            <select id="sess_lead" required>
+              <option value="Liam">Liam</option>
+              <option value="Jo">Jo</option>
+              <option value="Rachel">Rachel</option>
+              <option value="Scott H">Scott H</option>
+              <option value="Juste">Juste</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sess_notes">Notes / Feedback</label>
+            <textarea id="sess_notes" rows="2" placeholder="e.g. Record turnout, started rainy"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="sess_loggedBy">Session Logged By</label>
+            <input type="text" id="sess_loggedBy" placeholder="e.g. Scott H" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Session Log Entry</button>
+      </form>
+      <div id="status-vol" class="status-msg"></div>
+    </section>
+
+    <!-- TAB 2: PARTICIPANT REGISTRATION & PAR-Q FORM -->
+    <section id="view-health-check" class="section-card" style="display: none;">
+      <h2>Participant Registration, Health (PAR-Q) & Consent Waiver</h2>
+      <p style="margin-bottom: 1.25rem; color: #475569;">
+        <strong>Important:</strong> Your health, safety, and wellbeing are our highest priorities. This form ensures our session leaders and coaches understand your physical readiness, adapt training sessions to your needs, and maintain proper duty-of-care standards across all community activities.
+      </p>
+
+      <form onsubmit="submitForm(event, 'healthCheck', 'status-hc')">
+        <!-- Section 1: Participant Information -->
+        <h3 style="color: var(--primary-navy); margin: 1rem 0;">Section 1: Participant Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="hc_fullName">Full Name *</label>
+            <input type="text" id="hc_fullName" placeholder="e.g. Jane Doe" required>
+          </div>
+          <div class="form-group">
+            <label for="hc_dob">Date of Birth *</label>
+            <input type="date" id="hc_dob" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="hc_phone">Phone Number *</label>
+            <input type="tel" id="hc_phone" placeholder="e.g. 07123456789" required>
+          </div>
+          <div class="form-group">
+            <label for="hc_email">Email Address *</label>
+            <input type="email" id="hc_email" placeholder="e.g. jane@example.com" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="hc_emergName">Emergency Contact Name & Relationship *</label>
+            <input type="text" id="hc_emergName" placeholder="e.g. John Doe (Spouse)" required>
+          </div>
+          <div class="form-group">
+            <label for="hc_emergPhone">Emergency Contact Phone Number *</label>
+            <input type="tel" id="hc_emergPhone" placeholder="e.g. 07987654321" required>
+          </div>
+        </div>
+
+        <!-- Community Impact & Funder Reporting (Optional) -->
+        <h4 style="color: var(--primary-navy); margin: 1rem 0 0.5rem 0;">Community Impact & Funder Reporting (Optional)</h4>
+        <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.75rem;">
+          To help us secure grant funding from partners to keep sessions accessible, please share:
+        </p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="hc_postcode">Postcode District (e.g., CT17)</label>
+            <input type="text" id="hc_postcode" placeholder="e.g. CT17">
+          </div>
+          <div class="form-group">
+            <label for="hc_ageBracket">Age Bracket</label>
+            <select id="hc_ageBracket">
+              <option value="">Select Age Bracket</option>
+              <option value="Under 18">Under 18</option>
+              <option value="18-24">18–24</option>
+              <option value="25-34">25–34</option>
+              <option value="35-49">35–49</option>
+              <option value="50-64">50–64</option>
+              <option value="65+">65+</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Section 2: Session Selection & Community Goals -->
+        <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 2: Session Selection & Community Goals</h3>
+        <div class="form-group">
+          <label>1. Which Stride Together sessions do you plan to attend? (Select all that apply)</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" name="hc_sessionsPlanned" value="Community Run Club (Dover)"> Community Run Club (Dover)</label>
+            <label class="checkbox-item"><input type="checkbox" name="hc_sessionsPlanned" value="Walking Club"> Walking Club</label>
+            <label class="checkbox-item"><input type="checkbox" name="hc_sessionsPlanned" value="HYROX Training (Legion Barbell)"> HYROX Training (Legion Barbell)</label>
+            <label class="checkbox-item"><input type="checkbox" name="hc_sessionsPlanned" value="Cycling Club"> Cycling Club</label>
+            <label class="checkbox-item"><input type="checkbox" name="hc_sessionsPlanned" value="ParkRun Group"> ParkRun Group</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="hc_primaryGoals">2. What are your primary reasons or goals for taking part? *</label>
+          <textarea id="hc_primaryGoals" rows="2" placeholder="e.g. Improve physical health, meet new people, build confidence" required></textarea>
+        </div>
+
+        <!-- Section 3: Physical Activity Readiness Questionnaire (PAR-Q) -->
+        <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 3: Physical Activity Readiness Questionnaire (PAR-Q)</h3>
+        <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.75rem;">
+          Please answer all questions accurately to ensure your safety during physical activity:
+        </p>
+
+        <div class="form-group">
+          <label>1. Has your doctor ever said that you have a heart condition and that you should only do physical activity recommended by a doctor? *</label>
+          <select id="parq_q1" required><option value="No">No</option><option value="Yes">Yes</option></select>
+        </div>
+
+        <div class="form-group">
+          <label>2. Do you feel pain in your chest when you do physical activity? *</label>
+          <select id="parq_q2" required><option value="No">No</option><option value="Yes">Yes</option></select>
+        </div>
+
+        <div class="form-group">
+          <label>3. In the past month, have you had chest pain when you were not doing physical activity? *</label>
+          <select id="parq_q3" required><option value="No">No</option><option value="Yes">Yes</option></select>
+        </div>
+
+        <div class="form-group">
+          <label>4. Do you lose your balance because of dizziness or do you ever lose consciousness? *</label>
+          <select id="parq_q4" required><option value="No">No</option><option value="Yes">Yes</option></select>
+        </div>
+
+        <div class="form-group">
+          <label>5. Do you have a bone, joint, or mobility issue (e.g., back, knee, hip) that could be made worse by a change in physical activity? *</label>
+          <select id="parq_q5" required><option value="No">No</option><option value="Yes">Yes</option></select>
+        </div>
+
+        <div class="form-group">
+          <label>6. Do you have a respiratory condition (e.g., asthma, COPD) or high blood pressure? *</label>
+          <select id="parq_q6" required><option value="No">No</option><option value="Yes">Yes</option></select>
+        </div>
+
+        <div class="form-group">
+          <label>7. Is your doctor currently prescribing drugs (e.g., water pills, blood pressure medication) for your heart condition? *</label>
+          <select id="parq_q7" required><option value="No">No</option><option value="Yes">Yes</option></select>
+        </div>
+
+        <div class="form-group">
+          <label>8. Do you have any current or past injuries, medical conditions, allergies, or health considerations that your session lead should be aware of? *</label>
+          <select id="parq_q8" required><option value="No">No</option><option value="Yes">Yes</option></select>
+        </div>
+
+        <div class="form-group">
+          <label for="hc_medicalNotes">If Yes to any medical considerations above, please provide details:</label>
+          <textarea id="hc_medicalNotes" rows="2" placeholder="Provide details here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>9. Do you know of any other reason why you should not engage in physical activity? *</label>
+          <select id="parq_q9" required><option value="No">No</option><option value="Yes">Yes</option></select>
+        </div>
+
+        <!-- Section 4: Media & Photography Release Consent -->
+        <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 4: Media & Photography Release Consent</h3>
+        <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.75rem;">
+          Stride Together CIC regularly captures photographs, social media reels, and documentary footage to showcase community impact, report to grant funders, and inspire others to move.
+        </p>
+
+        <div class="form-group">
+          <select id="hc_mediaConsent" required>
+            <option value="I AGREE">I AGREE to allow Stride Together CIC to capture and use photographs or video footage of my participation for promotional materials, social media, and impact reporting.</option>
+            <option value="I OPT OUT">I OPT OUT of photography and videography. (You will be offered a visual marker, such as a discrete wristband, during sessions so our media team knows not to feature you in close-ups).</option>
+          </select>
+        </div>
+
+        <!-- Section 5: UK GDPR Privacy Notice & Explicit Data Consent -->
+        <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 5: UK GDPR Privacy Notice & Explicit Data Consent</h3>
+        <div class="privacy-notice-box">
+          <strong>Data Controller & Statutory Registration:</strong> Personal data is collected and processed by Stride Together CIC, Company Registration No: 17243958, Registered Address: 33 Crabble Hill, Dover, Kent, CT17 0RX. Stride Together CIC is registered as a Data Controller with the Information Commissioner's Office (ICO Registration Certificate - ZC237149).<br><br>
+          • <strong>Purpose & Legal Basis:</strong> Personal and health information is processed solely to assess physical readiness, deliver safe session coaching, contact emergency services if required, and provide anonymised, aggregated demographic reports to funders. Medical data is classified as Special Category Data under Article 6(1)(a) and Article 9(2)(a) of the UK GDPR.<br>
+          • <strong>Storage & Security:</strong> Your data is stored securely in password-protected, encrypted Google Workspace shared drives accessible only by authorized directors, coaches, and first aiders.<br>
+          • <strong>Data Retention:</strong> PAR-Q health declarations are valid for 12 months and retained for 3 years post-inactivity in compliance with sports liability insurance audit requirements, after which records are securely destroyed.<br>
+          • <strong>Your Legal Rights:</strong> Under UK GDPR, you have the right to access, rectify, or request erasure of your data, or withdraw consent at any time by contacting stridetogethercic@gmail.com.
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-item">
+            <input type="checkbox" id="hc_explicitConsent" required>
+            <span>I explicitly consent to Stride Together CIC collecting, holding, and processing my personal data and health information (Special Category Data) for the purposes of creating safe community sessions and managing my health and safety. *</span>
+          </label>
+        </div>
+
+        <!-- Section 6: Participant Declaration & Sign-Off -->
+        <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 6: Participant Declaration & Sign-Off</h3>
+        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem;">
+          1. I confirm that I have answered all physical readiness questions truthfully and to the best of my knowledge.<br>
+          2. If my medical condition or health status changes at any point (e.g., new injury, surgery, diagnosis, or prescription), I agree to inform my session lead immediately before participating in further activities.<br>
+          3. I acknowledge that my PAR-Q declaration remains valid for 12 months and that session leaders will run brief verbal screening checks prior to each activity.
+        </p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="hc_signature">Participant Signature (Type Full Legal Name) *</label>
+            <input type="text" id="hc_signature" placeholder="e.g. Jane Doe" required>
+          </div>
+          <div class="form-group">
+            <label for="hc_declarationDate">Date *</label>
+            <input type="date" id="hc_declarationDate" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Participant Registration & PAR-Q Waiver</button>
+      </form>
+      <div id="status-hc" class="status-msg"></div>
+    </section>
+
+    <!-- TAB 3: UK GDPR-COMPLIANT FEEDBACK FORM -->
+    <section id="view-feedback" class="section-card" style="display: none;">
+      <h2>Stride Together Session Feedback</h2>
+      <p style="margin-bottom: 1.25rem; color: #475569;">
+        This form helps us ensure Stride Together CIC provides the best possible support for both your mental and physical wellbeing. 😁
+      </p>
+
+      <form onsubmit="submitForm(event, 'feedback', 'status-fb')">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fb_activityGroup">Which event/session did you attend? *</label>
+            <select id="fb_activityGroup" required>
+              <option value="Walk Wednesday">Walk Wednesday</option>
+              <option value="Cycling Sunday">Cycling Sunday</option>
+              <option value="HYROX Class">HYROX Class</option>
+              <option value="Mobile Personal Training">Mobile Personal Training</option>
+              <option value="Running Group">Running Group</option>
+              <option value="Walking Group">Walking Group</option>
+              <option value="Social Meetup">Social Meetup / Coffee Catchup</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fb_location">Location / Area *</label>
+            <select id="fb_location" required>
+              <option value="Dover">Dover</option>
+              <option value="Folkestone">Folkestone</option>
+              <option value="Thanet">Thanet</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fb_ageBracket">Age Bracket *</label>
+            <select id="fb_ageBracket" required>
+              <option value="Under 18">Under 18</option>
+              <option value="18-24">18–24</option>
+              <option value="25-34">25–34</option>
+              <option value="35-44">35–44</option>
+              <option value="45-54">45–54</option>
+              <option value="55-64">55–64</option>
+              <option value="65+">65+</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fb_gender">Gender *</label>
+            <select id="fb_gender" required>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Non-binary / Self-describe">Non-binary / Self-describe</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fb_overallRating">Overall Session Rating (1-5 Stars) *</label>
+            <select id="fb_overallRating" required>
+              <option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option>
+              <option value="4">⭐⭐⭐⭐ 4 - Very Good</option>
+              <option value="3">⭐⭐⭐ 3 - Good</option>
+              <option value="2">⭐⭐ 2 - Fair</option>
+              <option value="1">⭐ 1 - Poor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fb_welcomed">Did you feel welcomed and included today? *</label>
+            <select id="fb_welcomed" required>
+              <option value="Yes, completely">Yes, completely</option>
+              <option value="Somewhat">Somewhat</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Session Impact & Wellbeing</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fb_wellbeing">Did the session help improve your mental wellbeing?</label>
+            <select id="fb_wellbeing" required>
+              <option value="Yes, Definitely">Yes, Definitely</option>
+              <option value="Somewhat">Somewhat</option>
+              <option value="Not Today">Not Today</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fb_physicalActivity">Did the session improve your physical activity level?</label>
+            <select id="fb_physicalActivity" required>
+              <option value="Yes, Definitely">Yes, Definitely</option>
+              <option value="Somewhat">Somewhat</option>
+              <option value="Not Today">Not Today</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="fb_confidence">Did the session increase your confidence?</label>
+            <select id="fb_confidence" required>
+              <option value="Yes, Definitely">Yes, Definitely</option>
+              <option value="Somewhat">Somewhat</option>
+              <option value="Not Today">Not Today</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fb_socialConnections">Did you make new social connections?</label>
+            <select id="fb_socialConnections" required>
+              <option value="Yes, Definitely">Yes, Definitely</option>
+              <option value="Somewhat">Somewhat</option>
+              <option value="Not Today">Not Today</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fb_reducedIsolation">Did the session reduce feelings of isolation?</label>
+            <select id="fb_reducedIsolation" required>
+              <option value="Yes, Definitely">Yes, Definitely</option>
+              <option value="Somewhat">Somewhat</option>
+              <option value="Not Today">Not Today</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fb_wentWell">What did you enjoy the most about today's session?</label>
+          <textarea id="fb_wentWell" rows="2" placeholder="e.g. Great group atmosphere, supportive activity lead"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="fb_suggestions">Any suggestions for improvement?</label>
+          <textarea id="fb_suggestions" rows="2" placeholder="e.g. Different route options, extra warm-up time"></textarea>
+        </div>
+
+        <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Follow-Up Contact Details (Optional)</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fb_fullName">Name (Optional)</label>
+            <input type="text" id="fb_fullName" placeholder="Leave blank to remain anonymous">
+          </div>
+          <div class="form-group">
+            <label for="fb_email">Email Address (Optional)</label>
+            <input type="email" id="fb_email" placeholder="Only if you would like us to follow up">
+          </div>
+        </div>
+
+        <div class="privacy-notice-box">
+          <strong>UK GDPR Privacy Notice:</strong> By submitting this form, you agree to Stride Together CIC processing your feedback responses to evaluate and report on the social impact of our community activities. Personal details (if provided) are stored securely in accordance with our Privacy Policy and will never be shared with third parties.
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-item">
+            <input type="checkbox" id="fb_gdprConsent" required>
+            <span>I agree to the processing of my feedback data in accordance with the UK GDPR privacy notice above. *</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Feedback Response</button>
+      </form>
+      <div id="status-fb" class="status-msg"></div>
+    </section>
+
+    <!-- TAB 4: CLIENT QUESTIONNAIRE FORM -->
+    <section id="view-questionnaire" class="section-card" style="display: none;">
+      <h2>Client Intake Questionnaire</h2>
+      <form onsubmit="submitForm(event, 'questionnaire', 'status-q')">
+        <div class="form-row">
+          <div class="form-group"><label>Full Name</label><input type="text" id="q_fullName" required></div>
+          <div class="form-group"><label>Email Address</label><input type="email" id="q_email" required></div>
+        </div>
+
+        <div class="form-group">
+          <label>Main goals for joining Stride Together CIC:</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" name="q_goals" value="Physical Fitness"> Physical Fitness</label>
+            <label class="checkbox-item"><input type="checkbox" name="q_goals" value="Mental Wellbeing"> Mental Wellbeing</label>
+            <label class="checkbox-item"><input type="checkbox" name="q_goals" value="Social Connection"> Social Connection</label>
+            <label class="checkbox-item"><input type="checkbox" name="q_goals" value="Event Training"> Event Training (Hyrox/ParkRun)</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Current Activity Level:</label>
+          <select id="q_activityLevel" required>
+            <option value="Not currently active">Not currently active</option>
+            <option value="Lightly active (1-2x/week)">Lightly active (1-2x/week)</option>
+            <option value="Moderately active (3-4x/week)">Moderately active (3-4x/week)</option>
+            <option value="Very active (5+x/week)">Very active (5+x/week)</option>
+          </select>
+        </div>
+
+        <div class="form-group"><label>How can we best support you during sessions?</label><textarea id="q_supportNotes" rows="2"></textarea></div>
+
+        <button type="submit" class="btn-submit">Submit Intake Questionnaire</button>
+      </form>
+      <div id="status-q" class="status-msg"></div>
+    </section>
+
+    <!-- TAB 5: GRANT SPEND FORM -->
+    <section id="view-staff" class="section-card" style="display: none;">
+      <h2>Point-of-Purchase Expense & Grant Spend Tracker</h2>
+      <form onsubmit="submitForm(event, 'grantSpend', 'status-staff')">
+        <div class="form-row">
+          <div class="form-group"><label>Logged By</label><input type="text" id="grant_loggedBy" required></div>
+          <div class="form-group">
+            <label>Grant Pot / Restricted Code</label>
+            <select id="grant_code" required>
+              <option value="G-LOTTERY-YOUTH">G-LOTTERY-YOUTH (National Lottery Youth/SEND)</option>
+              <option value="G-SPORTENG-RUN">G-SPORTENG-RUN (Sport England Community Run)</option>
+              <option value="G-HOKA-TRIAL">G-HOKA-TRIAL (HOKA Shoe Trial & Walk)</option>
+              <option value="G-DOVER-COUNCIL">G-DOVER-COUNCIL (Dover District Council)</option>
+              <option value="UNRESTRICTED">UNRESTRICTED (General CIC Operations)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group"><label>Vendor Name</label><input type="text" id="grant_vendor" required></div>
+          <div class="form-group"><label>Amount (£ GBP)</label><input type="number" id="grant_amount" step="0.01" required></div>
+        </div>
+
+        <div class="form-group"><label>Description / Line Item Notes</label><textarea id="grant_desc" rows="2" required></textarea></div>
+
+        <button type="submit" class="btn-submit">Record Expense Entry</button>
+      </form>
+      <div id="status-staff" class="status-msg"></div>
+    </section>
+
+    <!-- TAB 6: GOVERNANCE LOG FORM -->
+    <section id="view-board" class="section-card" style="display: none;">
+      <h2>Governance & Compliance Filing Log</h2>
+      <form onsubmit="submitForm(event, 'governance', 'status-board')">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Governing Body / Provider</label>
+            <select id="gov_body" required>
+              <option value="Companies House">Companies House (CS01 / CIC34)</option>
+              <option value="Hiscox Insurance">Hiscox Insurance (D&O / Volunteer)</option>
+              <option value="ICO">ICO Data Controller (ZC237149)</option>
+              <option value="England Athletics">England Athletics (Club Affiliation)</option>
+              <option value="Enterprise Risk Register">Enterprise Risk Register Audit</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Responsible Director / Lead</label><input type="text" id="gov_lead" required></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group"><label>Due / Review Date</label><input type="date" id="gov_dueDate" required></div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="gov_status" required>
+              <option value="Compliant">Compliant / Active</option>
+              <option value="Under Review">Under Review / Action Plan</option>
+              <option value="Pending">Pending Renewal</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group"><label>Action Plan / Reference Notes</label><textarea id="gov_notes" rows="2" required></textarea></div>
+
+        <button type="submit" class="btn-submit">Log Compliance Action</button>
+      </form>
+      <div id="status-board" class="status-msg"></div>
+    </section>
+
+    <!-- TAB 7: STRIDE TOGETHER MULTI-ITEM MERCHANDISE STORE -->
+    <section id="view-merch" class="section-card" style="display: none;">
+      <h2>Stride Together CIC Community Store</h2>
+      <p style="margin-bottom: 1.5rem; color: #475569;">
+        Wear your community pride! Select items below to build your order. All proceeds support free community run, walk, and wellbeing sessions.
+      </p>
+
+      <!-- Merch Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        
+        <!-- Item 1: Running Tee -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">APPAREL • ALL AGES</div>
+            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Stride Breathable Tech Tee</h3>
+            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Lightweight, moisture-wicking athletic tee featuring the reflective Stride Together logo.</p>
+          </div>
+          <div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£18.00</div>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <select id="m_size_1">
+                <option value="Youth S">Youth S</option>
+                <option value="Youth M/L">Youth M/L</option>
+                <option value="Adult S">Adult S</option>
+                <option value="Adult M" selected>Adult M</option>
+                <option value="Adult L">Adult L</option>
+                <option value="Adult XL">Adult XL</option>
+                <option value="Adult XXL">Adult XXL</option>
+              </select>
+              <input type="number" id="m_qty_1" value="1" min="1" max="10">
+            </div>
+            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Stride Breathable Tech Tee', 18.00, 'm_size_1', 'm_qty_1')">+ Add to Order List</button>
+          </div>
+        </div>
+
+        <!-- Item 2: Community Hoodie -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="background: #DCFCE7; color: #166534; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">WARM-UP • ALL AGES</div>
+            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Cozy Post-Run Hoodie</h3>
+            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Soft cotton fleece hoodie with front pouch pocket and subtle embroidered logo.</p>
+          </div>
+          <div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£32.00</div>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <select id="m_size_2">
+                <option value="Kids S">Kids S</option>
+                <option value="Kids M/L">Kids M/L</option>
+                <option value="Adult S">Adult S</option>
+                <option value="Adult M" selected>Adult M</option>
+                <option value="Adult L">Adult L</option>
+                <option value="Adult XL">Adult XL</option>
+                <option value="Adult XXL">Adult XXL</option>
+              </select>
+              <input type="number" id="m_qty_2" value="1" min="1" max="10">
+            </div>
+            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Cozy Post-Run Hoodie', 32.00, 'm_size_2', 'm_qty_2')">+ Add to Order List</button>
+          </div>
+        </div>
+
+        <!-- Item 3: Water Bottle -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="background: #FEF3C7; color: #92400E; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">EQUIPMENT • ESSENTIAL</div>
+            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Stainless Steel Water Bottle (750ml)</h3>
+            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Double-wall insulated flask keeping drinks cold for 24 hours. Laser-etched logo.</p>
+          </div>
+          <div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£12.50</div>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <select id="m_size_3">
+                <option value="Standard 750ml">Standard 750ml</option>
+              </select>
+              <input type="number" id="m_qty_3" value="1" min="1" max="10">
+            </div>
+            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Stainless Steel Water Bottle', 12.50, 'm_size_3', 'm_qty_3')">+ Add to Order List</button>
+          </div>
+        </div>
+
+        <!-- Item 4: Run Cap / Beanie -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="background: #F3E8FF; color: #6B21A8; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">ACCESSORIES</div>
+            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Performance Headwear</h3>
+            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Choose between lightweight UV-protection running cap or winter beanie.</p>
+          </div>
+          <div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£10.00</div>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <select id="m_size_4">
+                <option value="Run Cap (Navy)">Run Cap (Navy)</option>
+                <option value="Winter Beanie (Teal)">Winter Beanie (Teal)</option>
+              </select>
+              <input type="number" id="m_qty_4" value="1" min="1" max="10">
+            </div>
+            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Performance Headwear', 10.00, 'm_size_4', 'm_qty_4')">+ Add to Order List</button>
+          </div>
+        </div>
+
+        <!-- Item 5: High-Vis Safety Bundle -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="background: #FEE2E2; color: #991B1B; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">SAFETY & ACCESSORIES</div>
+            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">High-Vis Night Safety Bundle</h3>
+            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Set of 2 rechargeable LED reflective armbands + drawstring kit bag.</p>
+          </div>
+          <div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£14.00</div>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <select id="m_size_5">
+                <option value="Multi-Pack Set">Multi-Pack Set</option>
+              </select>
+              <input type="number" id="m_qty_5" value="1" min="1" max="10">
+            </div>
+            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('High-Vis Night Safety Bundle', 14.00, 'm_size_5', 'm_qty_5')">+ Add to Order List</button>
+          </div>
+        </div>
+
+        <!-- Item 6: Youth Active Pack -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">KIDS & YOUTH</div>
+            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Youth Stride Active Pack</h3>
+            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Includes youth-sized graphic tee, silicone bottle, and sticker sheet.</p>
+          </div>
+          <div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£20.00</div>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <select id="m_size_6">
+                <option value="Ages 5-8">Ages 5–8</option>
+                <option value="Ages 9-12">Ages 9–12</option>
+                <option value="Ages 13-15">Ages 13–15</option>
+              </select>
+              <input type="number" id="m_qty_6" value="1" min="1" max="10">
+            </div>
+            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Youth Stride Active Pack', 20.00, 'm_size_6', 'm_qty_6')">+ Add to Order List</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MULTI-ITEM ORDER SUMMARY & CHECKOUT BOX -->
+      <div id="cartSummaryBox" style="background: #FFFFFF; border: 2px solid var(--accent-teal); border-radius: 8px; padding: 1.5rem; margin-top: 1rem;">
+        <h3 style="color: var(--primary-navy); margin-bottom: 0.75rem;">Selected Items in Order</h3>
+        
+        <div id="cartItemsList" style="margin-bottom: 1rem; color: #475569;">
+          <em>No items selected yet. Select options above and click "+ Add to Order List".</em>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-color); padding-top: 0.75rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <strong style="font-size: 1.1rem; color: var(--primary-navy);">Total Amount:</strong>
+          <strong style="font-size: 1.25rem; color: var(--accent-teal);" id="cartTotalDisplay">£0.00</strong>
+        </div>
+
+        <form onsubmit="submitForm(event, 'merchOrder', 'status-merch')">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="merch_buyerName">Full Name *</label>
+              <input type="text" id="merch_buyerName" required>
+            </div>
+            <div class="form-group">
+              <label for="merch_buyerEmail">Email Address *</label>
+              <input type="email" id="merch_buyerEmail" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="merch_pickupLoc">Preferred Session Collection Location *</label>
+            <select id="merch_pickupLoc" required>
+              <option value="Dover Wednesday Run / Walk Session">Dover Wednesday Run / Walk Session</option>
+              <option value="Dover Saturday ParkRun">Dover Saturday ParkRun</option>
+              <option value="Dover Tuesday Hyrox">Dover Tuesday Hyrox</option>
+            </select>
+          </div>
+
+          <button type="submit" id="btnSubmitMerch" class="btn-submit" disabled>Submit Order Request</button>
+        </form>
+        <div id="status-merch" class="status-msg"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Stride Together CIC.</p>
+    <p style="margin-top: 0.5rem; font-size: 0.88rem;">
+      <a href="https://drive.google.com/file/d/1teJq4OaZrUEwR6Ogb72JX4aTt8oGktTu/view?usp=drive_link" target="_blank" style="color: var(--accent-teal); text-decoration: underline;">View Privacy Policy (PDF) ↗</a>
+    </p>
+  </footer>
+
+  <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzug8chhJFkhgRR04mfdboeFx2StviXRxcFEPMNlDPHF6LXhlhczjp2t3RxBibxFXWarw/exec";
+
+    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    let rawDashboardData = [];
+    let locationChartInst = null;
+    let activityChartInst = null;
+    let monthlyTrendChartInst = null;
+    let avgGroupChartInst = null;
+    let cartItems = [];
+
+    let activeDrillDown = {
+      type: null, 
+      value: null
+    };
+
+    Chart.register(ChartDataLabels);
+
+    const ACTIVITY_COLOR_MAP = {
+      "Running Group":   "#1F4E78",
+      "Walking Group":   "#00A8C6",
+      "Teenage Group":   "#FF9F40",
+      "Cycling Group":   "#FF6384",
+      "Hyrox":           "#9966FF",
+      "ParkRun":         "#4BC0C0",
+      "Coffee Catchup":  "#FFCE56",
+      "Social Meetup":   "#36A2EB"
+    };
+
+    const LOCATION_COLOR_MAP = {
+      "Dover":       "#2563EB",
+      "Folkestone":  "#06B6D4",
+      "Thanet":      "#10B981",
+      "Unspecified": "#94A3B8"
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const navContainer = document.getElementById('topNav');
+      if (navContainer) {
+        navContainer.addEventListener('click', (e) => {
+          const btn = e.target.closest('.nav-btn');
+          if (!btn) return;
+
+          let viewName = btn.getAttribute('data-view');
+          if (!viewName) {
+            const onclickAttr = btn.getAttribute('onclick') || '';
+            const match = onclickAttr.match(/'([^']+)'/);
+            if (match) viewName = match[1];
+          }
+
+          if (viewName) {
+            switchView(btn, viewName);
+          }
+        });
+      }
+    });
+
+    function addToCart(title, price, sizeSelectId, qtyInputId) {
+      const sizeVal = document.getElementById(sizeSelectId).value;
+      const qtyVal = parseInt(document.getElementById(qtyInputId).value) || 1;
+
+      cartItems.push({
+        title: title,
+        price: price,
+        size: sizeVal,
+        quantity: qtyVal,
+        subtotal: price * qtyVal
+      });
+
+      renderCart();
+      document.getElementById('cartSummaryBox').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function removeFromCart(index) {
+      cartItems.splice(index, 1);
+      renderCart();
+    }
+
+    function renderCart() {
+      const listEl = document.getElementById('cartItemsList');
+      const totalEl = document.getElementById('cartTotalDisplay');
+      const submitBtn = document.getElementById('btnSubmitMerch');
+
+      if (cartItems.length === 0) {
+        listEl.innerHTML = '<em>No items selected yet. Select options above and click "+ Add to Order List".</em>';
+        totalEl.innerText = '£0.00';
+        submitBtn.disabled = true;
+        return;
+      }
+
+      let total = 0;
+      let html = '<ul style="list-style: none; padding: 0;">';
+      
+      cartItems.forEach((item, idx) => {
+        total += item.subtotal;
+        html += `<li style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding: 0.4rem 0;">
+          <span><strong>${item.title}</strong> (${item.size}) x${item.quantity}</span>
+          <span>£${item.subtotal.toFixed(2)} <button type="button" onclick="removeFromCart(${idx})" style="background: none; border: none; color: #991B1B; cursor: pointer; font-weight: bold; margin-left: 0.5rem;">✕ Remove</button></span>
+        </li>`;
+      });
+
+      html += '</ul>';
+      listEl.innerHTML = html;
+      totalEl.innerText = '£' + total.toFixed(2);
+      submitBtn.disabled = false;
+    }
+
+    function calcNewParticipants() {
+      const total = parseInt(document.getElementById('sess_totalParts').value) || 0;
+      const returning = parseInt(document.getElementById('sess_returningParts').value) || 0;
+      const newPartsInput = document.getElementById('sess_newParts');
+
+      let calculatedNew = total - returning;
+      if (calculatedNew < 0) calculatedNew = 0;
+
+      newPartsInput.value = calculatedNew;
+    }
+
+    function switchView(btn, viewName) {
+      const views = ['dashboard', 'sessions-list', 'volunteer', 'health-check', 'feedback', 'questionnaire', 'staff', 'board', 'merch'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.style.display = (v === viewName) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      if (viewName === 'dashboard' || viewName === 'sessions-list') {
+        loadDashboardData(false);
+      }
+    }
+
+    function parseDateToMmmYyyy(val) {
+      if (!val) return null;
+      const s = val.toString().trim();
+      if (!s || s === 'Invalid Date' || s === 'undefined' || s === 'null' || s === 'Unspecified') {
+        return null;
+      }
+
+      if (s.includes('T')) {
+        let d = new Date(s);
+        if (!isNaN(d.getTime())) {
+          const timePart = s.split('T')[1];
+          const hour = parseInt(timePart.substring(0, 2), 10);
+          if (hour >= 20) {
+            d.setUTCHours(d.getUTCHours() + 5);
+          }
+          return `${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+        }
+      }
+
+      const mmmYyyyMatch = s.match(/^([A-Za-z]{3,9})[\s,]+(\d{4})$/);
+      if (mmmYyyyMatch) {
+        const rawMonth = mmmYyyyMatch[1].toLowerCase();
+        const year = mmmYyyyMatch[2];
+        const monthIndex = MONTH_NAMES.findIndex(m => 
+          m.toLowerCase() === rawMonth.substring(0, 3) || (rawMonth.startsWith('sep') && m === 'Sep')
+        );
+        if (monthIndex !== -1) {
+          return `${MONTH_NAMES[monthIndex]} ${year}`;
+        }
+      }
+
+      const isoDateMatch = s.match(/^(\d{4})[-/](\d{1,2})(?:[-/](\d{1,2}))?$/);
+      if (isoDateMatch) {
+        const year = isoDateMatch[1];
+        const monthIndex = parseInt(isoDateMatch[2], 10) - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          return `${MONTH_NAMES[monthIndex]} ${year}`;
+        }
+      }
+
+      const dmyMatch = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+      if (dmyMatch) {
+        const monthIndex = parseInt(dmyMatch[2], 10) - 1;
+        const year = dmyMatch[3];
+        if (monthIndex >= 0 && monthIndex < 12) {
+          return `${MONTH_NAMES[monthIndex]} ${year}`;
+        }
+      }
+
+      if (!isNaN(Date.parse(s))) {
+        let d = new Date(s);
+        if (!isNaN(d.getTime())) {
+          return `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+        }
+      }
+
+      return null;
+    }
+
+    function extractMonthYear(row) {
+      if (!row) return 'Unspecified';
+
+      let m = parseDateToMmmYyyy(row['Month'] || row['month'] || row['MONTH']);
+      if (m) return m;
+
+      m = parseDateToMmmYyyy(row['Session Date'] || row['sessionDate'] || row['Date']);
+      if (m) return m;
+
+      m = parseDateToMmmYyyy(row['Timestamp'] || row['timestamp'] || row['Datestamp']);
+      if (m) return m;
+
+      return 'Unspecified';
+    }
+
+    function sortMonths(monthList) {
+      return monthList.slice().sort((a, b) => {
+        const getVal = (str) => {
+          const parts = str.split(' ');
+          if (parts.length === 2) {
+            const idx = MONTH_NAMES.indexOf(parts[0]);
+            const y = parseInt(parts[1], 10);
+            if (idx !== -1 && !isNaN(y)) return y * 12 + idx;
+          }
+          return 0;
+        };
+        return getVal(a) - getVal(b);
+      });
+    }
+
+    async function loadDashboardData(forceRefresh = false) {
+      if (!forceRefresh && rawDashboardData.length > 0) {
+        document.getElementById('dash-loading').style.display = 'none';
+        document.getElementById('dash-content').style.display = 'block';
+        applyFilters();
+        renderSessionsTable(rawDashboardData);
+        return;
+      }
+
+      document.getElementById('dash-loading').style.display = 'flex';
+      document.getElementById('dash-content').style.display = 'none';
+
+      try {
+        const response = await fetch(WEB_APP_URL);
+        const result = await response.json();
+        
+        if (result.data) {
+          rawDashboardData = (result.data || []).filter(row => 
+            row['Session Date'] || row['Group / Activity'] || row['Location'] || row['Month'] || row['Timestamp']
+          );
+          populateMonthDropdown(rawDashboardData);
+          renderSessionsTable(rawDashboardData);
+          applyFilters();
+          document.getElementById('dash-loading').style.display = 'none';
+          document.getElementById('dash-content').style.display = 'block';
+        }
+      } catch (err) {
+        document.getElementById('dash-loading').innerHTML = '<span style="color: #991B1B;">Error loading dashboard data: ' + err.toString() + '</span>';
+      }
+    }
+
+    // Explicitly pulls Session Date from Column B and formats clean dates
+    function renderSessionsTable(data) {
+      const tbody = document.getElementById('sessionsTableBody');
+      if (!tbody) return;
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:2rem; color:#64748B;">No session records found.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.forEach((row, idx) => {
+        const bgColor = (idx % 2 === 0) ? '#FFFFFF' : '#F8FAFC';
+        
+        // Target Column B (Session Date) explicitly, ignoring Timestamp
+        let rawDate = row['Session Date'] || row['sessionDate'] || row['Date'] || '-';
+        let dateVal = formatDateOnly(rawDate);
+
+        const locVal = row['Location'] || '-';
+        const dayTimeVal = row['Day / Time'] || row['dayTime'] || '-';
+        const groupVal = row['Group / Activity'] || row['groupActivity'] || '-';
+        const totalVal = row['Total Participants'] || row['totalParticipants'] || 0;
+        const returnVal = row['Returning Participants'] || row['returningParticipants'] || 0;
+        const newVal = row['New Participants'] || row['newParticipants'] || 0;
+        const volsVal = row['Volunteers / Staff'] || row['totalVolunteers'] || 0;
+        const hoursVal = row['Hours delivered'] || row['hoursDelivered'] || 0;
+        const leadVal = row['Activity Lead'] || row['activityLead'] || '-';
+        const notesVal = row['Notes / Feedback'] || row['notesFeedback'] || '-';
+
+        html += `<tr style="background-color: ${bgColor}; border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 0.65rem 1rem; font-weight: 600; color: var(--primary-navy); white-space: nowrap;">${dateVal}</td>
+          <td style="padding: 0.65rem 1rem; white-space: nowrap;">${locVal}</td>
+          <td style="padding: 0.65rem 1rem; white-space: nowrap; color: #64748B;">${dayTimeVal}</td>
+          <td style="padding: 0.65rem 1rem; font-weight: 600;">${groupVal}</td>
+          <td style="padding: 0.65rem 1rem; text-align: center; font-weight: 700; color: var(--accent-teal);">${totalVal}</td>
+          <td style="padding: 0.65rem 1rem; text-align: center;">${returnVal}</td>
+          <td style="padding: 0.65rem 1rem; text-align: center; color: #166534; font-weight: 600;">${newVal}</td>
+          <td style="padding: 0.65rem 1rem; text-align: center;">${volsVal}</td>
+          <td style="padding: 0.65rem 1rem; text-align: center;">${hoursVal}</td>
+          <td style="padding: 0.65rem 1rem; white-space: nowrap; font-weight: 500;">${leadVal}</td>
+          <td style="padding: 0.65rem 1rem; color: #475569; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${notesVal}">${notesVal}</td>
+        </tr>`;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    // Helper to extract DD/MM/YYYY dates from ISO date/time strings
+    function formatDateOnly(val) {
+      if (!val || val === '-') return '-';
+      let s = val.toString().trim();
+      
+      if (s.includes('T')) {
+        let d = new Date(s);
+        if (!isNaN(d.getTime())) {
+          let day = String(d.getUTCDate()).padStart(2, '0');
+          let month = String(d.getUTCMonth() + 1).padStart(2, '0');
+          let year = d.getUTCFullYear();
+          return `${day}/${month}/${year}`;
+        }
+      }
+      return s;
+    }
+
+    function filterSessionTable() {
+      const query = document.getElementById('sessionTableSearch').value.toLowerCase();
+      const rows = document.querySelectorAll('#sessionsTableBody tr');
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    }
+
+    function populateMonthDropdown(data) {
+      const monthSelect = document.getElementById('monthFilter');
+      const currentSelected = monthSelect.value;
+      monthSelect.innerHTML = '<option value="ALL">All Months</option>';
+
+      let monthsSet = new Set();
+      data.forEach(row => {
+        let m = extractMonthYear(row);
+        if (m && m !== 'Unspecified') monthsSet.add(m);
+      });
+
+      const sortedMonths = sortMonths(Array.from(monthsSet));
+      sortedMonths.forEach(m => {
+        let opt = document.createElement('option');
+        opt.value = m;
+        opt.innerText = m;
+        monthSelect.appendChild(opt);
+      });
+
+      if (currentSelected && Array.from(monthSelect.options).some(o => o.value === currentSelected)) {
+        monthSelect.value = currentSelected;
+      }
+    }
+
+    function applyFilters() {
+      const selectedMonth = document.getElementById('monthFilter').value;
+      let filtered = rawDashboardData;
+
+      if (selectedMonth !== 'ALL') {
+        filtered = filtered.filter(row => extractMonthYear(row) === selectedMonth);
+      }
+
+      if (activeDrillDown.type && activeDrillDown.value) {
+        filtered = filtered.filter(row => {
+          if (activeDrillDown.type === 'location') {
+            return (row['Location'] || 'Unspecified') === activeDrillDown.value;
+          } else if (activeDrillDown.type === 'activity') {
+            return (row['Group / Activity'] || 'Unspecified') === activeDrillDown.value;
+          } else if (activeDrillDown.type === 'month') {
+            return extractMonthYear(row) === activeDrillDown.value;
+          }
+          return true;
+        });
+
+        document.getElementById('filterCriteriaText').innerText = `${activeDrillDown.type.toUpperCase()}: ${activeDrillDown.value}`;
+        document.getElementById('activeFilterBanner').style.display = 'flex';
+      } else {
+        document.getElementById('activeFilterBanner').style.display = 'none';
+      }
+
+      processAndRenderData(filtered);
+    }
+
+    function triggerDrillDown(type, value) {
+      if (activeDrillDown.type === type && activeDrillDown.value === value) {
+        clearDrillDownFilter();
+        return;
+      }
+      activeDrillDown = { type: type, value: value };
+      applyFilters();
+    }
+
+    function clearDrillDownFilter() {
+      activeDrillDown = { type: null, value: null };
+      document.getElementById('activeFilterBanner').style.display = 'none';
+      applyFilters();
+    }
+
+    function processAndRenderData(data) {
+      let totalSessions = data.length;
+      let totalParticipants = 0;
+      let totalHours = 0;
+      let totalWis = 0;
+      let wisCount = 0;
+
+      let locationMap = {};
+      let activityTotalMap = {};
+      let activitySessionCountMap = {};
+
+      let monthlyMap = {};
+      let allLocationsSet = new Set();
+
+      data.forEach(row => {
+        let count = parseInt(row['Total Participants']) || 0;
+        let hours = parseFloat(row['Hours delivered']) || 0;
+        let wis = parseFloat(row['WIS Rating'] || row['WIS Score']) || 0;
+        let loc = row['Location'] || 'Unspecified';
+        let act = row['Group / Activity'] || 'Unspecified';
+
+        let m = extractMonthYear(row);
+
+        totalParticipants += count;
+        totalHours += hours;
+        
+        if (wis > 0) {
+          totalWis += wis;
+          wisCount++;
+        }
+
+        locationMap[loc] = (locationMap[loc] || 0) + count;
+        activityTotalMap[act] = (activityTotalMap[act] || 0) + count;
+        activitySessionCountMap[act] = (activitySessionCountMap[act] || 0) + 1;
+
+        if (!monthlyMap[m]) monthlyMap[m] = { Total: 0 };
+        if (!monthlyMap[m][loc]) monthlyMap[m][loc] = 0;
+
+        monthlyMap[m][loc] += count;
+        monthlyMap[m].Total += count;
+        allLocationsSet.add(loc);
+      });
+
+      let avgParts = totalSessions > 0 ? (totalParticipants / totalSessions).toFixed(1) : 0;
+      let avgWis = wisCount > 0 ? (totalWis / wisCount).toFixed(2) : '3.80';
+
+      document.getElementById('kpi-total-parts').innerText = totalParticipants;
+      document.getElementById('kpi-sessions').innerText = totalSessions;
+      document.getElementById('kpi-avg-parts').innerText = avgParts;
+      document.getElementById('kpi-hours').innerText = totalHours.toFixed(1);
+      document.getElementById('kpi-wis').innerText = avgWis;
+
+      let sortedLocations = Object.entries(locationMap)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 4);
+
+      let locLabels = sortedLocations.map(item => item[0]);
+      let locValues = sortedLocations.map(item => item[1]);
+
+      let activityAvgMap = {};
+      Object.keys(activityTotalMap).forEach(act => {
+        let tot = activityTotalMap[act];
+        let sessCount = activitySessionCountMap[act];
+        activityAvgMap[act] = sessCount > 0 ? (tot / sessCount).toFixed(1) : 0;
+      });
+
+      let sortedMonths = sortMonths(Object.keys(monthlyMap).filter(m => m !== 'Unspecified'));
+      if (monthlyMap['Unspecified']) sortedMonths.push('Unspecified');
+
+      renderLocationChart(locLabels, locValues);
+      renderActivityChart(Object.keys(activityTotalMap), Object.values(activityTotalMap));
+      renderMonthlyTrendChart(sortedMonths, Array.from(allLocationsSet), monthlyMap);
+      renderAvgGroupChart(Object.keys(activityAvgMap), Object.values(activityAvgMap));
+    }
+
+    function renderLocationChart(labels, values) {
+      const ctx = document.getElementById('locationChart').getContext('2d');
+      if (locationChartInst) locationChartInst.destroy();
+
+      const assignedColors = labels.map(label => LOCATION_COLOR_MAP[label] || "#2563EB");
+
+      locationChartInst = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Participants',
+            data: values,
+            backgroundColor: assignedColors,
+            borderRadius: 4
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          onClick: (evt, elements) => {
+            if (elements.length > 0) {
+              const index = elements[0].index;
+              triggerDrillDown('location', labels[index]);
+            }
+          },
+          plugins: { 
+            legend: { display: false },
+            datalabels: { display: false }
+          } 
+        }
+      });
+    }
+
+    function renderActivityChart(labels, values) {
+      const ctx = document.getElementById('activityChart').getContext('2d');
+      if (activityChartInst) activityChartInst.destroy();
+
+      const assignedColors = labels.map(label => ACTIVITY_COLOR_MAP[label] || "#0F172A");
+
+      activityChartInst = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: assignedColors
+          }]
+        },
+        options: { 
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (evt, elements) => {
+            if (elements.length > 0) {
+              const index = elements[0].index;
+              triggerDrillDown('activity', labels[index]);
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { boxWidth: 12, font: { size: 10 } }
+            },
+            datalabels: {
+              color: '#FFFFFF',
+              font: { weight: 'bold', size: 10 },
+              formatter: (val) => val > 0 ? val : ''
+            }
+          }
+        }
+      });
+    }
+
+    function renderMonthlyTrendChart(months, locations, monthlyMap) {
+      const ctx = document.getElementById('monthlyTrendChart').getContext('2d');
+      if (monthlyTrendChartInst) monthlyTrendChartInst.destroy();
+
+      let datasets = locations.map(loc => {
+        return {
+          type: 'bar',
+          label: loc,
+          data: months.map(m => (monthlyMap[m] && monthlyMap[m][loc]) || 0),
+          backgroundColor: LOCATION_COLOR_MAP[loc] || '#64748B',
+          borderRadius: 6,
+          stack: 'locationStack'
+        };
+      });
+
+      datasets.push({
+        type: 'line',
+        label: 'Total Participants Trend',
+        data: months.map(m => (monthlyMap[m] && monthlyMap[m].Total) || 0),
+        borderColor: '#F43F5E',
+        backgroundColor: '#F43F5E',
+        borderWidth: 3,
+        fill: false,
+        tension: 0.35,
+        pointRadius: 5,
+        pointBackgroundColor: '#FFFFFF',
+        pointBorderWidth: 3
+      });
+
+      monthlyTrendChartInst = new Chart(ctx, {
+        data: {
+          labels: months,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (evt, elements) => {
+            if (elements.length > 0) {
+              const index = elements[0].index;
+              triggerDrillDown('month', months[index]);
+            }
+          },
+          plugins: {
+            legend: { 
+              display: true, 
+              position: 'top', 
+              labels: { font: { size: 11, weight: '600' }, boxWidth: 14 } 
+            },
+            datalabels: {
+              display: function(context) {
+                return context.dataset.type === 'line' || context.datasetIndex === locations.length - 1;
+              },
+              color: function(context) {
+                return context.dataset.type === 'line' ? '#E11D48' : '#1E293B';
+              },
+              font: { weight: 'bold', size: 11 },
+              anchor: 'end',
+              align: 'top',
+              formatter: (val) => val > 0 ? val : ''
+            }
+          },
+          scales: {
+            x: { stacked: true, grid: { display: false } },
+            y: { stacked: true, beginAtZero: true, grid: { color: '#F1F5F9' } }
+          }
+        }
+      });
+    }
+
+    function renderAvgGroupChart(labels, values) {
+      const ctx = document.getElementById('avgGroupChart').getContext('2d');
+      if (avgGroupChartInst) avgGroupChartInst.destroy();
+
+      const assignedColors = labels.map(label => ACTIVITY_COLOR_MAP[label] || "#00A8C6");
+
+      avgGroupChartInst = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Average Group Size',
+            data: values,
+            backgroundColor: assignedColors,
+            borderRadius: 4
+          }]
+        },
+        options: { 
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (evt, elements) => {
+            if (elements.length > 0) {
+              const index = elements[0].index;
+              triggerDrillDown('activity', labels[index]);
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              anchor: 'end',
+              align: 'end',
+              color: '#0F172A',
+              font: { weight: 'bold', size: 10 },
+              formatter: (val) => val > 0 ? val : ''
+            }
+          },
+          scales: {
+            x: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function submitForm(e, formType, statusId) {
+      e.preventDefault();
+      const statusMsg = document.getElementById(statusId);
+      statusMsg.style.display = 'block';
+      statusMsg.className = 'status-msg status-success';
+      statusMsg.innerText = 'Submitting response to Google Sheets...';
+
+      let payload = { formType: formType };
+
+      if (formType === 'healthCheck') {
+        payload.fullName = document.getElementById('hc_fullName').value;
+        payload.dob = document.getElementById('hc_dob').value;
+        payload.phone = document.getElementById('hc_phone').value;
+        payload.email = document.getElementById('hc_email').value;
+        payload.emergencyName = document.getElementById('hc_emergName').value;
+        payload.emergencyPhone = document.getElementById('hc_emergPhone').value;
+        payload.postcode = document.getElementById('hc_postcode').value;
+        payload.ageBracket = document.getElementById('hc_ageBracket').value;
+        
+        payload.sessionsPlanned = Array.from(document.querySelectorAll('input[name="hc_sessionsPlanned"]:checked')).map(cb => cb.value).join(", ");
+        payload.primaryGoals = document.getElementById('hc_primaryGoals').value;
+
+        payload.parq_q1 = document.getElementById('parq_q1').value;
+        payload.parq_q2 = document.getElementById('parq_q2').value;
+        payload.parq_q3 = document.getElementById('parq_q3').value;
+        payload.parq_q4 = document.getElementById('parq_q4').value;
+        payload.parq_q5 = document.getElementById('parq_q5').value;
+        payload.parq_q6 = document.getElementById('parq_q6').value;
+        payload.parq_q7 = document.getElementById('parq_q7').value;
+        payload.parq_q8 = document.getElementById('parq_q8').value;
+        payload.medicalNotes = document.getElementById('hc_medicalNotes').value;
+        payload.parq_q9 = document.getElementById('parq_q9').value;
+
+        payload.mediaConsent = document.getElementById('hc_mediaConsent').value;
+        payload.explicitConsent = document.getElementById('hc_explicitConsent').checked ? 'YES' : 'NO';
+        payload.signature = document.getElementById('hc_signature').value;
+        payload.declarationDate = document.getElementById('hc_declarationDate').value;
+      } 
+      else if (formType === 'feedback') {
+        payload.activityGroup = document.getElementById('fb_activityGroup').value;
+        payload.location = document.getElementById('fb_location').value;
+        payload.ageBracket = document.getElementById('fb_ageBracket').value;
+        payload.gender = document.getElementById('fb_gender').value;
+        payload.overallRating = document.getElementById('fb_overallRating').value;
+        payload.welcomed = document.getElementById('fb_welcomed').value;
+        payload.wellbeing = document.getElementById('fb_wellbeing').value;
+        payload.physicalActivity = document.getElementById('fb_physicalActivity').value;
+        payload.confidence = document.getElementById('fb_confidence').value;
+        payload.socialConnections = document.getElementById('fb_socialConnections').value;
+        payload.reducedIsolation = document.getElementById('fb_reducedIsolation').value;
+        payload.wentWell = document.getElementById('fb_wentWell').value;
+        payload.suggestions = document.getElementById('fb_suggestions').value;
+        payload.fullName = document.getElementById('fb_fullName').value || 'Anonymous';
+        payload.email = document.getElementById('fb_email').value || 'Not provided';
+      } 
+      else if (formType === 'questionnaire') {
+        payload.fullName = document.getElementById('q_fullName').value;
+        payload.email = document.getElementById('q_email').value;
+        payload.goals = Array.from(document.querySelectorAll('input[name="q_goals"]:checked')).map(cb => cb.value).join(", ");
+        payload.activityLevel = document.getElementById('q_activityLevel').value;
+        payload.supportNotes = document.getElementById('q_supportNotes').value;
+      }
+      else if (formType === 'sessionLog') {
+        let rawDate = document.getElementById('sess_date').value;
+        let formattedDate = '';
+        let monthStr = '';
+
+        if (rawDate) {
+          let dateParts = rawDate.split('-');
+          if (dateParts.length === 3) {
+            let year = parseInt(dateParts[0], 10);
+            let month = parseInt(dateParts[1], 10);
+            let day = parseInt(dateParts[2], 10);
+
+            let pad = (n) => n < 10 ? '0' + n : n;
+            formattedDate = `${pad(day)}/${pad(month)}/${year}`;
+            monthStr = `${MONTH_NAMES[month - 1]} ${year}`;
+          }
+        }
+
+        payload.sessionDate = formattedDate;
+        payload.rawDate = rawDate;
+        payload.date = formattedDate;
+        payload.month = monthStr;
+        payload.location = document.getElementById('sess_location').value;
+        payload.dayTime = document.getElementById('sess_dayTime').value;
+        payload.groupActivity = document.getElementById('sess_group').value;
+        payload.totalParticipants = document.getElementById('sess_totalParts').value;
+        payload.returningParticipants = document.getElementById('sess_returningParts').value;
+        payload.newParticipants = document.getElementById('sess_newParts').value;
+        payload.totalVolunteers = document.getElementById('sess_volunteers').value;
+        payload.hoursDelivered = document.getElementById('sess_hours').value;
+        payload.activityLead = document.getElementById('sess_lead').value;
+        payload.notesFeedback = document.getElementById('sess_notes').value;
+        payload.sessionLoggedBy = document.getElementById('sess_loggedBy').value;
+      }
+      else if (formType === 'grantSpend') {
+        payload.loggedBy = document.getElementById('grant_loggedBy').value;
+        payload.grantCode = document.getElementById('grant_code').value;
+        payload.vendorName = document.getElementById('grant_vendor').value;
+        payload.amountGbp = document.getElementById('grant_amount').value;
+        payload.itemDescription = document.getElementById('grant_desc').value;
+      }
+      else if (formType === 'governance') {
+        payload.governingBody = document.getElementById('gov_body').value;
+        payload.responsibleLead = document.getElementById('gov_lead').value;
+        payload.dueDate = document.getElementById('gov_dueDate').value;
+        payload.filingStatus = document.getElementById('gov_status').value;
+        payload.actionNotes = document.getElementById('gov_notes').value;
+      }
+      else if (formType === 'merchOrder') {
+        let totalVal = 0;
+        let summaryList = cartItems.map(item => {
+          totalVal += item.subtotal;
+          return `${item.title} (${item.size}) x${item.quantity}`;
+        }).join("; ");
+
+        payload.buyerName = document.getElementById('merch_buyerName').value;
+        payload.buyerEmail = document.getElementById('merch_buyerEmail').value;
+        payload.pickupLocation = document.getElementById('merch_pickupLoc').value;
+        payload.orderItemsSummary = summaryList;
+        payload.totalAmountGbp = totalVal.toFixed(2);
+        payload.cartItemsJson = JSON.stringify(cartItems);
+      }
+
+      const formData = new URLSearchParams();
+      for (const key in payload) {
+        formData.append(key, payload[key]);
+      }
+
+      fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: formData
+      })
+      .then(() => {
+        if (formType === 'merchOrder') {
+          statusMsg.innerText = 'Order request issued, we will be in contact to provide a payment link.';
+          cartItems = [];
+          renderCart();
+        } else {
+          statusMsg.innerText = 'Success! Response saved directly into Google Sheets.';
+        }
+        e.target.reset();
+        if (document.getElementById('sess_newParts')) document.getElementById('sess_newParts').value = '';
+        rawDashboardData = [];
+      })
+      .catch(err => {
+        statusMsg.className = 'status-msg status-error';
+        statusMsg.innerText = 'Error submitting response: ' + err.toString();
+      });
+    }
+
+    loadDashboardData(false);
+  </script>
+</body>
+</html>
