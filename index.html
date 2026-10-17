@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stride Together CIC - Web Portal & Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <!-- Deferred script loading to prevent render-blocking -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0" defer></script>
   <style>
     :root {
       --primary-navy: #1F4E78;
@@ -40,7 +41,7 @@
 
     .brand-logo {
       height: 48px;
-      width: auto;
+      width: 48px;
       border-radius: 6px;
       object-fit: contain;
     }
@@ -66,6 +67,8 @@
       display: flex;
       gap: 0.35rem;
       overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
     }
 
     .nav-btn {
@@ -78,6 +81,8 @@
       font-size: 0.8rem;
       color: var(--primary-navy);
       white-space: nowrap;
+      scroll-snap-align: start;
+      flex-shrink: 0;
     }
 
     .nav-btn.active, .nav-btn:hover {
@@ -219,8 +224,8 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* Pushes title to top and number to bottom */
-      min-height: 110px; /* Ensures identical height for all cards */
+      justify-content: space-between;
+      min-height: 110px;
     }
 
     .kpi-title { 
@@ -243,11 +248,6 @@
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
       margin-bottom: 1rem;
-    }
-
-    @media (max-width: 900px) {
-      .charts-grid { grid-template-columns: 1fr; }
-      .form-row, .form-row-3 { grid-template-columns: 1fr; }
     }
 
     .chart-card {
@@ -304,34 +304,115 @@
     }
 
     footer { text-align: center; padding: 2rem; color: #64748B; border-top: 1px solid var(--border-color); margin-top: 3rem; }
+
+    /* MOBILE RESPONSIVE OVERRIDES */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.75rem 1rem;
+        gap: 0.75rem;
+      }
+      
+      header > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      header span {
+        display: none;
+      }
+
+      nav {
+        padding: 0.5rem;
+        gap: 0.5rem;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 0.85rem;
+        font-size: 0.85rem;
+      }
+
+      main {
+        margin: 1rem auto;
+        padding: 0 0.75rem;
+      }
+
+      .section-card {
+        padding: 1.25rem 1rem;
+        margin-bottom: 1.25rem;
+        border-radius: 6px;
+      }
+
+      .form-row, 
+      .form-row-3 {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+
+      .kpi-card {
+        min-height: 90px;
+        padding: 0.85rem;
+      }
+
+      .kpi-value {
+        font-size: 1.25rem;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+      }
+
+      .chart-container-sm,
+      .chart-container-md {
+        height: 240px !important;
+      }
+
+      .form-group input, 
+      .form-group select, 
+      .form-group textarea {
+        font-size: 16px !important;
+        padding: 0.75rem;
+      }
+
+      .btn-submit {
+        padding: 0.85rem;
+        font-size: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
 
   <header>
     <div class="brand">
-      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together Logo" class="brand-logo">
+      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together Logo" class="brand-logo" width="48" height="48" loading="eager">
       <h1>Stride Together <span>CIC</span></h1>
     </div>
     <div style="display: flex; align-items: center; gap: 1.25rem;">
       <span style="font-size: 0.85rem; max-width: 340px; text-align: right; line-height: 1.3; opacity: 0.95;">
         Help us keep sessions free for everyone. Any donation, big or small, makes a difference. Thankyou.
       </span>
-      <!-- Replace with Co-op Bank payment link when ready -->
       <a href="YOUR_COOP_BANK_PAYMENT_LINK_HERE" target="_blank" class="btn-donate" style="white-space: nowrap;">Donate</a>
     </div>
   </header>
 
   <nav id="topNav">
-    <button class="nav-btn active" data-view="dashboard">Performance Dashboard</button>
-    <button class="nav-btn" data-view="sessions-list">View Sessions Log</button>
-    <button class="nav-btn" data-view="volunteer">[Form] Sessions Log</button>
-    <button class="nav-btn" data-view="health-check">[Form] Health (PAR-Q) & Registration</button>
-    <button class="nav-btn" data-view="feedback">[Form] Participant Feedback</button>
-    <button class="nav-btn" data-view="questionnaire">[Form] Client Intake Questionnaire</button>
-    <button class="nav-btn" data-view="staff">[Form] Grant Spend Tracker</button>
-    <button class="nav-btn" data-view="board">[Form] Governance Log</button>
-    <button class="nav-btn" data-view="merch">Community Merch Store</button>
+    <button class="nav-btn active" onclick="switchView(this, 'dashboard')">Performance Dashboard</button>
+    <button class="nav-btn" onclick="switchView(this, 'sessions-list')">View Sessions Log</button>
+    <button class="nav-btn" onclick="switchView(this, 'volunteer')">[Form] Sessions Log</button>
+    <button class="nav-btn" onclick="switchView(this, 'health-check')">[Form] Health (PAR-Q) & Registration</button>
+    <button class="nav-btn" onclick="switchView(this, 'feedback')">[Form] Participant Feedback</button>
+    <button class="nav-btn" onclick="switchView(this, 'questionnaire')">[Form] Client Intake Questionnaire</button>
+    <button class="nav-btn" onclick="switchView(this, 'staff')">[Form] Grant Spend Tracker</button>
+    <button class="nav-btn" onclick="switchView(this, 'board')">[Form] Governance Log</button>
+    <button class="nav-btn" onclick="switchView(this, 'merch')">Community Merch Store</button>
   </nav>
 
   <main>
@@ -430,7 +511,7 @@
         Showing all session entries logged in Google Sheets. Use the search box above to filter by lead, group, or location.
       </p>
 
-      <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; max-height: 550px;">
+      <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; max-height: 550px; -webkit-overflow-scrolling: touch;">
         <table id="sessionsTable" style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
           <thead>
             <tr style="background-color: var(--primary-navy); color: white; position: sticky; top: 0; z-index: 10;">
@@ -564,7 +645,6 @@
       </p>
 
       <form onsubmit="submitForm(event, 'healthCheck', 'status-hc')">
-        <!-- Section 1: Participant Information -->
         <h3 style="color: var(--primary-navy); margin: 1rem 0;">Section 1: Participant Information</h3>
         <div class="form-row">
           <div class="form-group">
@@ -599,7 +679,6 @@
           </div>
         </div>
 
-        <!-- Community Impact & Funder Reporting (Optional) -->
         <h4 style="color: var(--primary-navy); margin: 1rem 0 0.5rem 0;">Community Impact & Funder Reporting (Optional)</h4>
         <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.75rem;">
           To help us secure grant funding from partners to keep sessions accessible, please share:
@@ -624,7 +703,6 @@
           </div>
         </div>
 
-        <!-- Section 2: Session Selection & Community Goals -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 2: Session Selection & Community Goals</h3>
         <div class="form-group">
           <label>1. Which Stride Together sessions do you plan to attend? (Select all that apply)</label>
@@ -642,7 +720,6 @@
           <textarea id="hc_primaryGoals" rows="2" placeholder="e.g. Improve physical health, meet new people, build confidence" required></textarea>
         </div>
 
-        <!-- Section 3: Physical Activity Readiness Questionnaire (PAR-Q) -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 3: Physical Activity Readiness Questionnaire (PAR-Q)</h3>
         <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.75rem;">
           Please answer all questions accurately to ensure your safety during physical activity:
@@ -698,7 +775,6 @@
           <select id="parq_q9" required><option value="No">No</option><option value="Yes">Yes</option></select>
         </div>
 
-        <!-- Section 4: Media & Photography Release Consent -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 4: Media & Photography Release Consent</h3>
         <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.75rem;">
           Stride Together CIC regularly captures photographs, social media reels, and documentary footage to showcase community impact, report to grant funders, and inspire others to move.
@@ -711,7 +787,6 @@
           </select>
         </div>
 
-        <!-- Section 5: UK GDPR Privacy Notice & Explicit Data Consent -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 5: UK GDPR Privacy Notice & Explicit Data Consent</h3>
         <div class="privacy-notice-box">
           <strong>Data Controller & Statutory Registration:</strong> Personal data is collected and processed by Stride Together CIC, Company Registration No: 17243958, Registered Address: 33 Crabble Hill, Dover, Kent, CT17 0RX. Stride Together CIC is registered as a Data Controller with the Information Commissioner's Office (ICO Registration Certificate - ZC237149).<br><br>
@@ -728,7 +803,6 @@
           </label>
         </div>
 
-        <!-- Section 6: Participant Declaration & Sign-Off -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 6: Participant Declaration & Sign-Off</h3>
         <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem;">
           1. I confirm that I have answered all physical readiness questions truthfully and to the best of my knowledge.<br>
@@ -1030,135 +1104,152 @@
         Wear your community pride! Select items below to build your order. All proceeds support free community run, walk, and wellbeing sessions.
       </p>
 
-      <!-- Merch Grid -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
         
         <!-- Item 1: Running Tee -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">APPAREL • ALL AGES</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Stride Breathable Tech Tee</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Lightweight, moisture-wicking athletic tee featuring the reflective Stride Together logo.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£18.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_1">
-                <option value="Youth S">Youth S</option>
-                <option value="Youth M/L">Youth M/L</option>
-                <option value="Adult S">Adult S</option>
-                <option value="Adult M" selected>Adult M</option>
-                <option value="Adult L">Adult L</option>
-                <option value="Adult XL">Adult XL</option>
-                <option value="Adult XXL">Adult XXL</option>
-              </select>
-              <input type="number" id="m_qty_1" value="1" min="1" max="10">
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80" alt="Stride Breathable Tech Tee" style="width: 100%; height: 180px; object-fit: cover;" loading="lazy">
+          <div style="padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+            <div>
+              <div style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">APPAREL • ALL AGES</div>
+              <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Stride Breathable Tech Tee</h3>
+              <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Lightweight, moisture-wicking athletic tee featuring the reflective Stride Together logo.</p>
             </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Stride Breathable Tech Tee', 18.00, 'm_size_1', 'm_qty_1')">+ Add to Order List</button>
+            <div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£18.00</div>
+              <div class="form-row" style="margin-bottom: 0.5rem;">
+                <select id="m_size_1">
+                  <option value="Youth S">Youth S</option>
+                  <option value="Youth M/L">Youth M/L</option>
+                  <option value="Adult S">Adult S</option>
+                  <option value="Adult M" selected>Adult M</option>
+                  <option value="Adult L">Adult L</option>
+                  <option value="Adult XL">Adult XL</option>
+                  <option value="Adult XXL">Adult XXL</option>
+                </select>
+                <input type="number" id="m_qty_1" value="1" min="1" max="10">
+              </div>
+              <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Stride Breathable Tech Tee', 18.00, 'm_size_1', 'm_qty_1')">+ Add to Order List</button>
+            </div>
           </div>
         </div>
 
         <!-- Item 2: Community Hoodie -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #DCFCE7; color: #166534; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">WARM-UP • ALL AGES</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Cozy Post-Run Hoodie</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Soft cotton fleece hoodie with front pouch pocket and subtle embroidered logo.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£32.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_2">
-                <option value="Kids S">Kids S</option>
-                <option value="Kids M/L">Kids M/L</option>
-                <option value="Adult S">Adult S</option>
-                <option value="Adult M" selected>Adult M</option>
-                <option value="Adult L">Adult L</option>
-                <option value="Adult XL">Adult XL</option>
-                <option value="Adult XXL">Adult XXL</option>
-              </select>
-              <input type="number" id="m_qty_2" value="1" min="1" max="10">
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80" alt="Cozy Post-Run Hoodie" style="width: 100%; height: 180px; object-fit: cover;" loading="lazy">
+          <div style="padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+            <div>
+              <div style="background: #DCFCE7; color: #166534; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">WARM-UP • ALL AGES</div>
+              <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Cozy Post-Run Hoodie</h3>
+              <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Soft cotton fleece hoodie with front pouch pocket and subtle embroidered logo.</p>
             </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Cozy Post-Run Hoodie', 32.00, 'm_size_2', 'm_qty_2')">+ Add to Order List</button>
+            <div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£32.00</div>
+              <div class="form-row" style="margin-bottom: 0.5rem;">
+                <select id="m_size_2">
+                  <option value="Kids S">Kids S</option>
+                  <option value="Kids M/L">Kids M/L</option>
+                  <option value="Adult S">Adult S</option>
+                  <option value="Adult M" selected>Adult M</option>
+                  <option value="Adult L">Adult L</option>
+                  <option value="Adult XL">Adult XL</option>
+                  <option value="Adult XXL">Adult XXL</option>
+                </select>
+                <input type="number" id="m_qty_2" value="1" min="1" max="10">
+              </div>
+              <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Cozy Post-Run Hoodie', 32.00, 'm_size_2', 'm_qty_2')">+ Add to Order List</button>
+            </div>
           </div>
         </div>
 
         <!-- Item 3: Water Bottle -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #FEF3C7; color: #92400E; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">EQUIPMENT • ESSENTIAL</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Stainless Steel Water Bottle (750ml)</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Double-wall insulated flask keeping drinks cold for 24 hours. Laser-etched logo.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£12.50</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_3">
-                <option value="Standard 750ml">Standard 750ml</option>
-              </select>
-              <input type="number" id="m_qty_3" value="1" min="1" max="10">
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80" alt="Stainless Steel Water Bottle" style="width: 100%; height: 180px; object-fit: cover;" loading="lazy">
+          <div style="padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+            <div>
+              <div style="background: #FEF3C7; color: #92400E; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">EQUIPMENT • ESSENTIAL</div>
+              <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Stainless Steel Water Bottle (750ml)</h3>
+              <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Double-wall insulated flask keeping drinks cold for 24 hours. Laser-etched logo.</p>
             </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Stainless Steel Water Bottle', 12.50, 'm_size_3', 'm_qty_3')">+ Add to Order List</button>
+            <div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£12.50</div>
+              <div class="form-row" style="margin-bottom: 0.5rem;">
+                <select id="m_size_3">
+                  <option value="Standard 750ml">Standard 750ml</option>
+                </select>
+                <input type="number" id="m_qty_3" value="1" min="1" max="10">
+              </div>
+              <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Stainless Steel Water Bottle', 12.50, 'm_size_3', 'm_qty_3')">+ Add to Order List</button>
+            </div>
           </div>
         </div>
 
         <!-- Item 4: Run Cap / Beanie -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #F3E8FF; color: #6B21A8; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">ACCESSORIES</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Performance Headwear</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Choose between lightweight UV-protection running cap or winter beanie.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£10.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_4">
-                <option value="Run Cap (Navy)">Run Cap (Navy)</option>
-                <option value="Winter Beanie (Teal)">Winter Beanie (Teal)</option>
-              </select>
-              <input type="number" id="m_qty_4" value="1" min="1" max="10">
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80" alt="Performance Headwear" style="width: 100%; height: 180px; object-fit: cover;" loading="lazy">
+          <div style="padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+            <div>
+              <div style="background: #F3E8FF; color: #6B21A8; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">ACCESSORIES</div>
+              <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Performance Headwear</h3>
+              <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Choose between lightweight UV-protection running cap or winter beanie.</p>
             </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Performance Headwear', 10.00, 'm_size_4', 'm_qty_4')">+ Add to Order List</button>
+            <div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£10.00</div>
+              <div class="form-row" style="margin-bottom: 0.5rem;">
+                <select id="m_size_4">
+                  <option value="Run Cap (Navy)">Run Cap (Navy)</option>
+                  <option value="Winter Beanie (Teal)">Winter Beanie (Teal)</option>
+                </select>
+                <input type="number" id="m_qty_4" value="1" min="1" max="10">
+              </div>
+              <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Performance Headwear', 10.00, 'm_size_4', 'm_qty_4')">+ Add to Order List</button>
+            </div>
           </div>
         </div>
 
-        <!-- Item 5: High-Vis Safety Bundle -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #FEE2E2; color: #991B1B; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">SAFETY & ACCESSORIES</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">High-Vis Night Safety Bundle</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Set of 2 rechargeable LED reflective armbands + drawstring kit bag.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£14.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_5">
-                <option value="Multi-Pack Set">Multi-Pack Set</option>
-              </select>
-              <input type="number" id="m_qty_5" value="1" min="1" max="10">
+        <!-- Item 5: High-Vis Safety & Head Torch Bundle -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80" alt="High-Vis Night Safety & Head Torch Bundle" style="width: 100%; height: 180px; object-fit: cover;" loading="lazy">
+          <div style="padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+            <div>
+              <div style="background: #FEE2E2; color: #991B1B; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">SAFETY & ACCESSORIES</div>
+              <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">High-Vis Night Safety & Head Torch Bundle</h3>
+              <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Ultra-bright USB rechargeable LED running head torch with adjustable strap + high-vis reflective bands.</p>
             </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('High-Vis Night Safety Bundle', 14.00, 'm_size_5', 'm_qty_5')">+ Add to Order List</button>
+            <div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£16.00</div>
+              <div class="form-row" style="margin-bottom: 0.5rem;">
+                <select id="m_size_5">
+                  <option value="Rechargeable LED Head Torch + Bands">Rechargeable LED Head Torch + Bands</option>
+                </select>
+                <input type="number" id="m_qty_5" value="1" min="1" max="10">
+              </div>
+              <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('High-Vis Night Safety & Head Torch Bundle', 16.00, 'm_size_5', 'm_qty_5')">+ Add to Order List</button>
+            </div>
           </div>
         </div>
 
         <!-- Item 6: Youth Active Pack -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">KIDS & YOUTH</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Youth Stride Active Pack</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Includes youth-sized graphic tee, silicone bottle, and sticker sheet.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£20.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_6">
-                <option value="Ages 5-8">Ages 5–8</option>
-                <option value="Ages 9-12">Ages 9–12</option>
-                <option value="Ages 13-15">Ages 13–15</option>
-              </select>
-              <input type="number" id="m_qty_6" value="1" min="1" max="10">
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=600&q=80" alt="Youth Stride Active Pack" style="width: 100%; height: 180px; object-fit: cover;" loading="lazy">
+          <div style="padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+            <div>
+              <div style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">KIDS & YOUTH</div>
+              <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Youth Stride Active Pack</h3>
+              <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Includes youth-sized graphic tee, silicone bottle, and sticker sheet.</p>
             </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Youth Stride Active Pack', 20.00, 'm_size_6', 'm_qty_6')">+ Add to Order List</button>
+            <div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£20.00</div>
+              <div class="form-row" style="margin-bottom: 0.5rem;">
+                <select id="m_size_6">
+                  <option value="Ages 5-8">Ages 5–8</option>
+                  <option value="Ages 9-12">Ages 9–12</option>
+                  <option value="Ages 13-15">Ages 13–15</option>
+                </select>
+                <input type="number" id="m_qty_6" value="1" min="1" max="10">
+              </div>
+              <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Youth Stride Active Pack', 20.00, 'm_size_6', 'm_qty_6')">+ Add to Order List</button>
+            </div>
           </div>
         </div>
 
@@ -1229,8 +1320,6 @@
       value: null
     };
 
-    Chart.register(ChartDataLabels);
-
     const ACTIVITY_COLOR_MAP = {
       "Running Group":   "#1F4E78",
       "Walking Group":   "#00A8C6",
@@ -1249,38 +1338,65 @@
       "Unspecified": "#94A3B8"
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const navContainer = document.getElementById('topNav');
-      if (navContainer) {
-        navContainer.addEventListener('click', (e) => {
-          const btn = e.target.closest('.nav-btn');
-          if (!btn) return;
+    // DIRECT SINGLE-RESPONSIBILITY SWITCH FUNCTION
+    function switchView(btn, viewName) {
+      const views = [
+        'dashboard', 
+        'sessions-list', 
+        'volunteer', 
+        'health-check', 
+        'feedback', 
+        'questionnaire', 
+        'staff', 
+        'board', 
+        'merch'
+      ];
 
-          let viewName = btn.getAttribute('data-view');
-          if (!viewName) {
-            const onclickAttr = btn.getAttribute('onclick') || '';
-            const match = onclickAttr.match(/'([^']+)'/);
-            if (match) viewName = match[1];
-          }
+      // Hide all section cards explicitly
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.style.display = 'none';
+      });
 
-          if (viewName) {
-            switchView(btn, viewName);
-          }
-        });
+      // Reset active styles on all nav buttons
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      // Highlight clicked button
+      if (btn) {
+        btn.classList.add('active');
       }
-    });
+
+      // Show exact target view
+      const targetEl = document.getElementById('view-' + viewName);
+      if (targetEl) {
+        targetEl.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Load data if switching to dashboard or sessions list
+      if (viewName === 'dashboard' || viewName === 'sessions-list') {
+        loadDashboardData(false);
+      }
+    }
 
     function addToCart(title, price, sizeSelectId, qtyInputId) {
       const sizeVal = document.getElementById(sizeSelectId).value;
       const qtyVal = parseInt(document.getElementById(qtyInputId).value) || 1;
 
-      cartItems.push({
-        title: title,
-        price: price,
-        size: sizeVal,
-        quantity: qtyVal,
-        subtotal: price * qtyVal
-      });
+      const existingIdx = cartItems.findIndex(item => item.title === title && item.size === sizeVal);
+
+      if (existingIdx > -1) {
+        cartItems[existingIdx].quantity += qtyVal;
+        cartItems[existingIdx].subtotal = cartItems[existingIdx].quantity * price;
+      } else {
+        cartItems.push({
+          title: title,
+          price: price,
+          size: sizeVal,
+          quantity: qtyVal,
+          subtotal: price * qtyVal
+        });
+      }
 
       renderCart();
       document.getElementById('cartSummaryBox').scrollIntoView({ behavior: 'smooth' });
@@ -1325,24 +1441,16 @@
       const returning = parseInt(document.getElementById('sess_returningParts').value) || 0;
       const newPartsInput = document.getElementById('sess_newParts');
 
+      if (returning > total) {
+        newPartsInput.style.borderColor = '#EF4444';
+      } else {
+        newPartsInput.style.borderColor = '#CBD5E1';
+      }
+
       let calculatedNew = total - returning;
       if (calculatedNew < 0) calculatedNew = 0;
 
       newPartsInput.value = calculatedNew;
-    }
-
-    function switchView(btn, viewName) {
-      const views = ['dashboard', 'sessions-list', 'volunteer', 'health-check', 'feedback', 'questionnaire', 'staff', 'board', 'merch'];
-      views.forEach(v => {
-        const el = document.getElementById('view-' + v);
-        if (el) el.style.display = (v === viewName) ? 'block' : 'none';
-      });
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-
-      if (viewName === 'dashboard' || viewName === 'sessions-list') {
-        loadDashboardData(false);
-      }
     }
 
     function parseDateToMmmYyyy(val) {
@@ -1435,11 +1543,20 @@
     }
 
     async function loadDashboardData(forceRefresh = false) {
-      if (!forceRefresh && rawDashboardData.length > 0) {
+      const CACHE_KEY = 'stride_dash_data';
+      const CACHE_TIME_KEY = 'stride_dash_time';
+      const CACHE_DURATION = 5 * 60 * 1000; // 5 minute caching layer
+
+      const cachedData = localStorage.getItem(CACHE_KEY);
+      const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+
+      if (!forceRefresh && cachedData && cachedTime && (Date.now() - cachedTime < CACHE_DURATION)) {
+        rawDashboardData = JSON.parse(cachedData);
+        populateMonthDropdown(rawDashboardData);
+        renderSessionsTable(rawDashboardData);
+        applyFilters();
         document.getElementById('dash-loading').style.display = 'none';
         document.getElementById('dash-content').style.display = 'block';
-        applyFilters();
-        renderSessionsTable(rawDashboardData);
         return;
       }
 
@@ -1454,6 +1571,10 @@
           rawDashboardData = (result.data || []).filter(row => 
             row['Session Date'] || row['Group / Activity'] || row['Location'] || row['Month'] || row['Timestamp']
           );
+          
+          localStorage.setItem(CACHE_KEY, JSON.stringify(rawDashboardData));
+          localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+
           populateMonthDropdown(rawDashboardData);
           renderSessionsTable(rawDashboardData);
           applyFilters();
@@ -1465,7 +1586,6 @@
       }
     }
 
-    // Explicitly pulls Session Date from Column B and formats clean dates
     function renderSessionsTable(data) {
       const tbody = document.getElementById('sessionsTableBody');
       if (!tbody) return;
@@ -1479,7 +1599,6 @@
       data.forEach((row, idx) => {
         const bgColor = (idx % 2 === 0) ? '#FFFFFF' : '#F8FAFC';
         
-        // Target Column B (Session Date) explicitly, ignoring Timestamp
         let rawDate = row['Session Date'] || row['sessionDate'] || row['Date'] || '-';
         let dateVal = formatDateOnly(rawDate);
 
@@ -1512,7 +1631,6 @@
       tbody.innerHTML = html;
     }
 
-    // Helper to extract DD/MM/YYYY dates from ISO date/time strings
     function formatDateOnly(val) {
       if (!val || val === '-') return '-';
       let s = val.toString().trim();
@@ -1608,6 +1726,12 @@
     }
 
     function processAndRenderData(data) {
+      if (typeof Chart === 'undefined') return;
+
+      if (Chart.defaults && ChartDataLabels) {
+        Chart.register(ChartDataLabels);
+      }
+
       let totalSessions = data.length;
       let totalParticipants = 0;
       let totalHours = 0;
@@ -1994,14 +2118,10 @@
         payload.cartItemsJson = JSON.stringify(cartItems);
       }
 
-      const formData = new URLSearchParams();
-      for (const key in payload) {
-        formData.append(key, payload[key]);
-      }
-
       fetch(WEB_APP_URL, {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
       })
       .then(() => {
         if (formType === 'merchOrder') {
@@ -2013,6 +2133,8 @@
         }
         e.target.reset();
         if (document.getElementById('sess_newParts')) document.getElementById('sess_newParts').value = '';
+        localStorage.removeItem('stride_dash_data');
+        localStorage.removeItem('stride_dash_time');
         rawDashboardData = [];
       })
       .catch(err => {
@@ -2021,7 +2143,9 @@
       });
     }
 
-    loadDashboardData(false);
+    window.addEventListener('load', () => {
+      loadDashboardData(false);
+    });
   </script>
 </body>
 </html>
