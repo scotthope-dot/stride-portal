@@ -1338,7 +1338,6 @@
       "Unspecified": "#94A3B8"
     };
 
-    // DIRECT SINGLE-RESPONSIBILITY SWITCH FUNCTION
     function switchView(btn, viewName) {
       const views = [
         'dashboard', 
@@ -1352,28 +1351,23 @@
         'merch'
       ];
 
-      // Hide all section cards explicitly
       views.forEach(v => {
         const el = document.getElementById('view-' + v);
         if (el) el.style.display = 'none';
       });
 
-      // Reset active styles on all nav buttons
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
-      // Highlight clicked button
       if (btn) {
         btn.classList.add('active');
       }
 
-      // Show exact target view
       const targetEl = document.getElementById('view-' + viewName);
       if (targetEl) {
         targetEl.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      // Load data if switching to dashboard or sessions list
       if (viewName === 'dashboard' || viewName === 'sessions-list') {
         loadDashboardData(false);
       }
@@ -1545,7 +1539,7 @@
     async function loadDashboardData(forceRefresh = false) {
       const CACHE_KEY = 'stride_dash_data';
       const CACHE_TIME_KEY = 'stride_dash_time';
-      const CACHE_DURATION = 5 * 60 * 1000; // 5 minute caching layer
+      const CACHE_DURATION = 5 * 60 * 1000;
 
       const cachedData = localStorage.getItem(CACHE_KEY);
       const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
@@ -2002,120 +1996,127 @@
 
       let payload = { formType: formType };
 
-      if (formType === 'healthCheck') {
-        payload.fullName = document.getElementById('hc_fullName').value;
-        payload.dob = document.getElementById('hc_dob').value;
-        payload.phone = document.getElementById('hc_phone').value;
-        payload.email = document.getElementById('hc_email').value;
-        payload.emergencyName = document.getElementById('hc_emergName').value;
-        payload.emergencyPhone = document.getElementById('hc_emergPhone').value;
-        payload.postcode = document.getElementById('hc_postcode').value;
-        payload.ageBracket = document.getElementById('hc_ageBracket').value;
-        
-        payload.sessionsPlanned = Array.from(document.querySelectorAll('input[name="hc_sessionsPlanned"]:checked')).map(cb => cb.value).join(", ");
-        payload.primaryGoals = document.getElementById('hc_primaryGoals').value;
-
-        payload.parq_q1 = document.getElementById('parq_q1').value;
-        payload.parq_q2 = document.getElementById('parq_q2').value;
-        payload.parq_q3 = document.getElementById('parq_q3').value;
-        payload.parq_q4 = document.getElementById('parq_q4').value;
-        payload.parq_q5 = document.getElementById('parq_q5').value;
-        payload.parq_q6 = document.getElementById('parq_q6').value;
-        payload.parq_q7 = document.getElementById('parq_q7').value;
-        payload.parq_q8 = document.getElementById('parq_q8').value;
-        payload.medicalNotes = document.getElementById('hc_medicalNotes').value;
-        payload.parq_q9 = document.getElementById('parq_q9').value;
-
-        payload.mediaConsent = document.getElementById('hc_mediaConsent').value;
-        payload.explicitConsent = document.getElementById('hc_explicitConsent').checked ? 'YES' : 'NO';
-        payload.signature = document.getElementById('hc_signature').value;
-        payload.declarationDate = document.getElementById('hc_declarationDate').value;
-      } 
-      else if (formType === 'feedback') {
-        payload.activityGroup = document.getElementById('fb_activityGroup').value;
-        payload.location = document.getElementById('fb_location').value;
-        payload.ageBracket = document.getElementById('fb_ageBracket').value;
-        payload.gender = document.getElementById('fb_gender').value;
-        payload.overallRating = document.getElementById('fb_overallRating').value;
-        payload.welcomed = document.getElementById('fb_welcomed').value;
-        payload.wellbeing = document.getElementById('fb_wellbeing').value;
-        payload.physicalActivity = document.getElementById('fb_physicalActivity').value;
-        payload.confidence = document.getElementById('fb_confidence').value;
-        payload.socialConnections = document.getElementById('fb_socialConnections').value;
-        payload.reducedIsolation = document.getElementById('fb_reducedIsolation').value;
-        payload.wentWell = document.getElementById('fb_wentWell').value;
-        payload.suggestions = document.getElementById('fb_suggestions').value;
-        payload.fullName = document.getElementById('fb_fullName').value || 'Anonymous';
-        payload.email = document.getElementById('fb_email').value || 'Not provided';
-      } 
-      else if (formType === 'questionnaire') {
-        payload.fullName = document.getElementById('q_fullName').value;
-        payload.email = document.getElementById('q_email').value;
-        payload.goals = Array.from(document.querySelectorAll('input[name="q_goals"]:checked')).map(cb => cb.value).join(", ");
-        payload.activityLevel = document.getElementById('q_activityLevel').value;
-        payload.supportNotes = document.getElementById('q_supportNotes').value;
-      }
-      else if (formType === 'sessionLog') {
-        let rawDate = document.getElementById('sess_date').value;
-        let formattedDate = '';
-        let monthStr = '';
-
-        if (rawDate) {
-          let dateParts = rawDate.split('-');
-          if (dateParts.length === 3) {
-            let year = parseInt(dateParts[0], 10);
-            let month = parseInt(dateParts[1], 10);
-            let day = parseInt(dateParts[2], 10);
-
-            let pad = (n) => n < 10 ? '0' + n : n;
-            formattedDate = `${pad(day)}/${pad(month)}/${year}`;
-            monthStr = `${MONTH_NAMES[month - 1]} ${year}`;
-          }
+      try {
+        if (formType === 'healthCheck') {
+          payload.fullName = document.getElementById('hc_fullName').value;
+          payload.dob = document.getElementById('hc_dob').value;
+          payload.phone = document.getElementById('hc_phone').value;
+          payload.email = document.getElementById('hc_email').value;
+          payload.emergencyName = document.getElementById('hc_emergName').value;
+          payload.emergencyPhone = document.getElementById('hc_emergPhone').value;
+          payload.postcode = document.getElementById('hc_postcode').value;
+          payload.ageBracket = document.getElementById('hc_ageBracket').value;
+          payload.sessionsPlanned = Array.from(document.querySelectorAll('input[name="hc_sessionsPlanned"]:checked')).map(cb => cb.value).join(", ");
+          payload.primaryGoals = document.getElementById('hc_primaryGoals').value;
+          payload.parq_q1 = document.getElementById('parq_q1').value;
+          payload.parq_q2 = document.getElementById('parq_q2').value;
+          payload.parq_q3 = document.getElementById('parq_q3').value;
+          payload.parq_q4 = document.getElementById('parq_q4').value;
+          payload.parq_q5 = document.getElementById('parq_q5').value;
+          payload.parq_q6 = document.getElementById('parq_q6').value;
+          payload.parq_q7 = document.getElementById('parq_q7').value;
+          payload.parq_q8 = document.getElementById('parq_q8').value;
+          payload.medicalNotes = document.getElementById('hc_medicalNotes').value;
+          payload.parq_q9 = document.getElementById('parq_q9').value;
+          payload.mediaConsent = document.getElementById('hc_mediaConsent').value;
+          payload.explicitConsent = document.getElementById('hc_explicitConsent').checked ? 'YES' : 'NO';
+          payload.signature = document.getElementById('hc_signature').value;
+          payload.declarationDate = document.getElementById('hc_declarationDate').value;
+        } 
+        else if (formType === 'feedback') {
+          payload.activityGroup = document.getElementById('fb_activityGroup').value;
+          payload.location = document.getElementById('fb_location').value;
+          payload.ageBracket = document.getElementById('fb_ageBracket').value;
+          payload.gender = document.getElementById('fb_gender').value;
+          payload.overallRating = document.getElementById('fb_overallRating').value;
+          payload.welcomed = document.getElementById('fb_welcomed').value;
+          payload.wellbeing = document.getElementById('fb_wellbeing').value;
+          payload.physicalActivity = document.getElementById('fb_physicalActivity').value;
+          payload.confidence = document.getElementById('fb_confidence').value;
+          payload.socialConnections = document.getElementById('fb_socialConnections').value;
+          payload.reducedIsolation = document.getElementById('fb_reducedIsolation').value;
+          payload.wentWell = document.getElementById('fb_wentWell').value;
+          payload.suggestions = document.getElementById('fb_suggestions').value;
+          payload.fullName = document.getElementById('fb_fullName').value || 'Anonymous';
+          payload.email = document.getElementById('fb_email').value || 'Not provided';
+        } 
+        else if (formType === 'questionnaire') {
+          payload.fullName = document.getElementById('q_fullName').value;
+          payload.email = document.getElementById('q_email').value;
+          payload.goals = Array.from(document.querySelectorAll('input[name="q_goals"]:checked')).map(cb => cb.value).join(", ");
+          payload.activityLevel = document.getElementById('q_activityLevel').value;
+          payload.supportNotes = document.getElementById('q_supportNotes').value;
         }
+        else if (formType === 'sessionLog') {
+          let rawDate = document.getElementById('sess_date').value;
+          let formattedDate = '';
+          let monthStr = '';
 
-        payload.sessionDate = formattedDate;
-        payload.rawDate = rawDate;
-        payload.date = formattedDate;
-        payload.month = monthStr;
-        payload.location = document.getElementById('sess_location').value;
-        payload.dayTime = document.getElementById('sess_dayTime').value;
-        payload.groupActivity = document.getElementById('sess_group').value;
-        payload.totalParticipants = document.getElementById('sess_totalParts').value;
-        payload.returningParticipants = document.getElementById('sess_returningParts').value;
-        payload.newParticipants = document.getElementById('sess_newParts').value;
-        payload.totalVolunteers = document.getElementById('sess_volunteers').value;
-        payload.hoursDelivered = document.getElementById('sess_hours').value;
-        payload.activityLead = document.getElementById('sess_lead').value;
-        payload.notesFeedback = document.getElementById('sess_notes').value;
-        payload.sessionLoggedBy = document.getElementById('sess_loggedBy').value;
-      }
-      else if (formType === 'grantSpend') {
-        payload.loggedBy = document.getElementById('grant_loggedBy').value;
-        payload.grantCode = document.getElementById('grant_code').value;
-        payload.vendorName = document.getElementById('grant_vendor').value;
-        payload.amountGbp = document.getElementById('grant_amount').value;
-        payload.itemDescription = document.getElementById('grant_desc').value;
-      }
-      else if (formType === 'governance') {
-        payload.governingBody = document.getElementById('gov_body').value;
-        payload.responsibleLead = document.getElementById('gov_lead').value;
-        payload.dueDate = document.getElementById('gov_dueDate').value;
-        payload.filingStatus = document.getElementById('gov_status').value;
-        payload.actionNotes = document.getElementById('gov_notes').value;
-      }
-      else if (formType === 'merchOrder') {
-        let totalVal = 0;
-        let summaryList = cartItems.map(item => {
-          totalVal += item.subtotal;
-          return `${item.title} (${item.size}) x${item.quantity}`;
-        }).join("; ");
+          if (rawDate) {
+            let dateParts = rawDate.split('-');
+            if (dateParts.length === 3) {
+              let year = parseInt(dateParts[0], 10);
+              let month = parseInt(dateParts[1], 10);
+              let day = parseInt(dateParts[2], 10);
+              let pad = (n) => n < 10 ? '0' + n : n;
+              formattedDate = `${pad(day)}/${pad(month)}/${year}`;
+              monthStr = `${MONTH_NAMES[month - 1]} ${year}`;
+            }
+          }
 
-        payload.buyerName = document.getElementById('merch_buyerName').value;
-        payload.buyerEmail = document.getElementById('merch_buyerEmail').value;
-        payload.pickupLocation = document.getElementById('merch_pickupLoc').value;
-        payload.orderItemsSummary = summaryList;
-        payload.totalAmountGbp = totalVal.toFixed(2);
-        payload.cartItemsJson = JSON.stringify(cartItems);
+          payload.sessionDate = formattedDate;
+          payload.rawDate = rawDate;
+          payload.date = formattedDate;
+          payload.month = monthStr;
+          payload.location = document.getElementById('sess_location').value;
+          payload.dayTime = document.getElementById('sess_dayTime').value;
+          payload.groupActivity = document.getElementById('sess_group').value;
+          payload.totalParticipants = document.getElementById('sess_totalParts').value;
+          payload.returningParticipants = document.getElementById('sess_returningParts').value;
+          payload.newParticipants = document.getElementById('sess_newParts').value;
+          payload.totalVolunteers = document.getElementById('sess_volunteers').value;
+          payload.hoursDelivered = document.getElementById('sess_hours').value;
+          payload.activityLead = document.getElementById('sess_lead').value;
+          payload.notesFeedback = document.getElementById('sess_notes').value;
+          payload.sessionLoggedBy = document.getElementById('sess_loggedBy').value;
+        }
+        else if (formType === 'grantSpend') {
+          payload.loggedBy = document.getElementById('grant_loggedBy').value;
+          payload.grantCode = document.getElementById('grant_code').value;
+          payload.vendorName = document.getElementById('grant_vendor').value;
+          payload.amountGbp = document.getElementById('grant_amount').value;
+          payload.itemDescription = document.getElementById('grant_desc').value;
+        }
+        else if (formType === 'governance') {
+          payload.governingBody = document.getElementById('gov_body').value;
+          payload.responsibleLead = document.getElementById('gov_lead').value;
+          payload.dueDate = document.getElementById('gov_dueDate').value;
+          payload.filingStatus = document.getElementById('gov_status').value;
+          payload.actionNotes = document.getElementById('gov_notes').value;
+        }
+        else if (formType === 'merchOrder') {
+          let totalVal = 0;
+          let summaryList = cartItems.map(item => {
+            totalVal += item.subtotal;
+            return `${item.title} (${item.size}) x${item.quantity}`;
+          }).join("; ");
+
+          // Dual-key strategy to support any Google Apps Script property naming convention
+          payload.name = document.getElementById('merch_buyerName').value;
+          payload.email = document.getElementById('merch_buyerEmail').value;
+          payload.buyerName = payload.name;
+          payload.buyerEmail = payload.email;
+          payload.pickupLocation = document.getElementById('merch_pickupLoc').value;
+          payload.items = summaryList;
+          payload.orderItemsSummary = summaryList;
+          payload.total = totalVal.toFixed(2);
+          payload.totalAmountGbp = payload.total;
+          payload.cartItemsJson = JSON.stringify(cartItems);
+        }
+      } catch (err) {
+        statusMsg.className = 'status-msg status-error';
+        statusMsg.innerText = 'Error building payload: ' + err.toString();
+        return;
       }
 
       fetch(WEB_APP_URL, {
@@ -2123,9 +2124,10 @@
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
+      .then(res => res.json().catch(() => ({ status: 'success' })))
       .then(() => {
         if (formType === 'merchOrder') {
-          statusMsg.innerText = 'Order request issued, we will be in contact to provide a payment link.';
+          statusMsg.innerText = 'Order request issued! We will contact you with payment details.';
           cartItems = [];
           renderCart();
         } else {
