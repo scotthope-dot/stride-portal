@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stride Together CIC - Web Portal & Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <style>
+    :root {
+      --primary-navy: #1F4E78;
+      --accent-teal: #00A8C6;
+      --muted-cyan: #4BA0B4;
+      --dark-slate: #0F172A;
+      --light-bg: #FFFFFF;
+      --card-bg: #F8FAFC;
+      --border-color: #E2E8F0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--light-bg); color: var(--dark-slate); line-height: 1.6; }
+
+    header {
+      background-color: var(--primary-navy);
+      color: white;
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-logo {
+      height: 48px;
+      width: auto;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+
+    .brand h1 { font-size: 1.4rem; font-weight: 700; }
+    .brand span { color: var(--accent-teal); }
+
+    .btn-donate {
+      background-color: var(--accent-teal);
+      color: white;
+      padding: 0.6rem 1.4rem;
+      border-radius: 6px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+    .btn-donate:hover { background-color: #008da6; }
+
+    nav {
+      background-color: #F1F5F9;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 2rem;
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+    }
+
+    .nav-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary-navy);
+      white-space: nowrap;
+    }
+
+    .nav-btn.active, .nav-btn:hover {
+      background-color: var(--primary-navy);
+      color: white;
+    }
+
+    main { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+
+    .section-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-card h2 {
+      color: var(--primary-navy);
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--accent-teal);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 1rem;
+    }
+
+    .form-group input[readonly] {
+      background-color: #E2E8F0;
+      color: #475569;
+      cursor: not-allowed;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    .checkbox-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .checkbox-item { display: flex; align-items: center; gap: 0.5rem; font-weight: normal; }
+
+    .btn-submit {
+      background-color: var(--primary-navy);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-submit:hover { background-color: var(--dark-slate); }
+
+    .status-msg { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none; font-weight: 600; }
+    .status-success { background-color: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+    .status-error { background-color: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+
+    .dashboard-header-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      color: var(--primary-navy);
+      white-space: nowrap;
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 0.45rem 0.8rem;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      font-weight: 600;
+      color: var(--dark-slate);
+    }
+
+    .active-filter-banner {
+      background-color: #E0F2FE;
+      border: 1px solid #BAE6FD;
+      color: #0369A1;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .active-filter-banner button {
+      background: none;
+      border: none;
+      color: #0369A1;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .kpi-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .kpi-title { font-size: 0.75rem; color: #64748B; font-weight: 600; text-transform: uppercase; }
+    .kpi-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-navy); margin-top: 0.25rem; }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+
+    .chart-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .chart-card h3 { 
+      color: var(--primary-navy); 
+      margin-bottom: 0.75rem; 
+      font-size: 0.95rem; 
+    }
+
+    .chart-container-sm {
+      position: relative;
+      height: 200px;
+      width: 100%;
+    }
+
+    .chart-container-md {
+      position: relative;
+      height: 220px;
+      width: 100%;
+    }
+
+    .loading { 
+      text-align: center; 
+      padding: 3rem; 
+      color: var(--primary-navy); 
+      font-size: 1.1rem; 
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--border-color);
+      border-top: 4px solid var(--accent-teal);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .table-container {
+      overflow-x: auto;
+      max-height: 500px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    table.data-table th {
+      background-color: var(--primary-navy);
+      color: white;
+      padding: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    table.data-table td {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    table.data-table tr:hover {
+      background-color: #F1F5F9;
+    }
+
+    .pagination-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .pagination-controls button {
+      background-color: var(--primary-navy);
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .pagination-controls button:disabled {
+      background-color: #CBD5E1;
+      cursor: not-allowed;
+    }
+
+    .be-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .be-container { grid-template-columns: 1fr; }
+    }
+
+    .be-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .be-card-section {
+      background: #F8FAFC;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .slider-group {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .slider-header label {
+      font-weight: 600;
+      color: var(--primary-navy);
+      font-size: 0.9rem;
+    }
+
+    .slider-header span {
+      font-weight: 700;
+      color: var(--accent-teal);
+    }
+
+    .slider-group input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .btn-remove {
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 1px solid #FECACA;
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .btn-remove:hover {
+      background: #FCA5A5;
+    }
+
+    footer { text-align: center; padding: 2rem; color: #64748B; border-top: 1px solid var(--border-color); margin-top: 3rem; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together Logo" class="brand-logo">
+      <h1>Stride Together <span>CIC</span></h1>
+    </div>
+    <a href="https://stridetogether.org.uk/donate" target="_blank" class="btn-donate">Donate</a>
+  </header>
+
+  <nav id="topNav">
+    <button class="nav-btn active" data-view="dashboard">Performance Dashboard</button>
+    <button class="nav-btn" data-view="sessions-table">Sessions Data</button>
+    <button class="nav-btn" data-view="break-even">Break-Even Calculator</button>
+    <button class="nav-btn" data-view="volunteer">Sessions Log</button>
+    <button class="nav-btn" data-view="health-check">Health Check</button>
+    <button class="nav-btn" data-view="feedback">Feedback</button>
+    <button class="nav-btn" data-view="questionnaire">Client Questionnaire</button>
+    <button class="nav-btn" data-view="staff">Grant Spend</button>
+    <button class="nav-btn" data-view="board">Governance</button>
+  </nav>
+
+  <main>
+    <!-- TAB 0: LIVE PERFORMANCE DASHBOARD -->
+    <section id="view-dashboard" class="section-card">
+      <div class="dashboard-header-controls">
+        <h2>Live Performance Dashboard</h2>
+        
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <div class="filter-group">
+            <label for="monthFilter">Month:</label>
+            <select id="monthFilter" onchange="applyFilters()">
+              <option value="ALL">All Months</option>
+            </select>
+          </div>
+          <button class="btn-submit" style="width: auto; padding: 0.4rem 0.9rem; font-size: 0.9rem;" onclick="loadDashboardData(true)">Refresh Data</button>
+        </div>
+      </div>
+
+      <!-- Active Drill-Down Filter Banner -->
+      <div id="activeFilterBanner" class="active-filter-banner" style="display: none;">
+        <span>Active Drill-Down Filter: <strong id="filterCriteriaText">None</strong></span>
+        <button onclick="clearDrillDownFilter()">Clear Filter</button>
+      </div>
+
+      <div id="dash-loading" class="loading">
+        <div class="spinner"></div>
+        <span>Collecting latest session data from Google Sheets... Please wait.</span>
+      </div>
+
+      <div id="dash-content" style="display: none;">
+        <!-- Primary KPI Metric Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-title">Total Participants</div>
+            <div class="kpi-value" id="kpi-total-parts">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Total Activity Sessions</div>
+            <div class="kpi-value" id="kpi-sessions">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Average Participants / Session</div>
+            <div class="kpi-value" id="kpi-avg-parts">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Hours Delivered</div>
+            <div class="kpi-value" id="kpi-hours">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Wellbeing Impact Score (WIS)</div>
+            <div class="kpi-value" id="kpi-wis">0.0</div>
+          </div>
+        </div>
+
+        <!-- Row 1: Compact Side-by-Side Charts -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Total Participants by Location (Click to Filter)</h3>
+            <div class="chart-container-sm">
+              <canvas id="locationChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>Total Participants by Group / Activity (Click to Filter)</h3>
+            <div class="chart-container-sm">
+              <canvas id="activityChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Compact Monthly Trend & Location Combo Chart -->
+        <div class="chart-card">
+          <h3>Month-by-Month Participants by Location & Overall Trend (Click Month/Bar to Filter)</h3>
+          <div class="chart-container-md">
+            <canvas id="monthlyTrendChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Row 3: Compact Horizontal Bar Chart -->
+        <div class="chart-card">
+          <h3>Average Group Size by Activity (Click to Filter)</h3>
+          <div class="chart-container-md">
+            <canvas id="avgGroupChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SESSIONS DATA TAB (DYNAMIC GOOGLE SHEET VIEWER) -->
+    <section id="view-sessions-table" class="section-card" style="display: none;">
+      <div class="dashboard-header-controls">
+        <h2>Sessions Log (Portal Data Sheet)</h2>
+        
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+          <div class="filter-group">
+            <label for="tableSearch">Search Sheet:</label>
+            <input type="text" id="tableSearch" placeholder="Type location, group, lead..." oninput="renderSessionsTable()">
+          </div>
+          <button class="btn-submit" style="width: auto; padding: 0.4rem 0.9rem; font-size: 0.9rem;" onclick="loadDashboardData(true)">Refresh Data</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead id="sessionsTableHead"></thead>
+          <tbody id="sessionsTableBody">
+            <tr>
+              <td colspan="14" style="text-align: center; padding: 2rem;">Loading sheet data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-controls">
+        <span id="tableRecordCount">Showing 0 records</span>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <button id="btnPrevPage" onclick="changePage(-1)">Previous</button>
+          <span id="pageIndicator" style="font-weight: 600;">Page 1</span>
+          <button id="btnNextPage" onclick="changePage(1)">Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: BREAK-EVEN CALCULATOR WITH BLENDED PRICING -->
+    <section id="view-break-even" class="section-card" style="display: none;">
+      <h2>Dynamic Break-Even & Blended Revenue Calculator</h2>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">Total Fixed Costs</div>
+          <div class="kpi-value" id="be-kpi-fixed">£0.00</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Var Cost / Attendee</div>
+          <div class="kpi-value" id="be-kpi-var">£0.00</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Blended Revenue / Attendee</div>
+          <div class="kpi-value" id="be-kpi-price">£0.00</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Break-Even Attendees</div>
+          <div class="kpi-value" id="be-kpi-units">0 Attendees</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Break-Even Revenue</div>
+          <div class="kpi-value" id="be-kpi-revenue">£0.00</div>
+        </div>
+      </div>
+
+      <div class="be-container">
+        <div class="be-card">
+          <!-- Blended Revenue Engine Controls -->
+          <div class="be-card-section">
+            <h3 style="color: var(--primary-navy); margin-bottom: 0.75rem;">Blended Revenue Engine</h3>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="be_dropin_price">Single Drop-in Price (£)</label>
+                <input type="number" id="be_dropin_price" step="0.5" value="12.00" oninput="updateBreakEven()">
+              </div>
+              <div class="form-group">
+                <label for="be_pass_price">Class Pass Total Price (£)</label>
+                <input type="number" id="be_pass_price" step="1.0" value="40.00" oninput="updateBreakEven()">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="be_pass_classes">Classes Included in Pass</label>
+                <input type="number" id="be_pass_classes" min="1" step="1" value="5" oninput="updateBreakEven()">
+              </div>
+              <div class="form-group">
+                <label>Effective Pass Price / Session</label>
+                <input type="text" id="be_effective_pass_price" value="£8.00" readonly style="font-weight: bold; color: var(--accent-teal);">
+              </div>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <label for="be_ratio_slider">Attendee Pricing Ratio (Drop-in vs Pass)</label>
+                <span id="be_ratio_display">50% Drop-in / 50% Pass</span>
+              </div>
+              <input type="range" id="be_ratio_slider" min="0" max="100" step="5" value="50" oninput="updateBreakEven()">
+            </div>
+          </div>
+
+          <!-- Add Custom Variable Form -->
+          <div class="be-card-section">
+            <h3 style="color: var(--primary-navy); margin-bottom: 0.75rem;">Add Custom Cost Variable</h3>
+            <form onsubmit="addBeVariable(event)">
+              <div class="form-group">
+                <label for="be_var_name">Cost Name</label>
+                <input type="text" id="be_var_name" placeholder="e.g. Venue Hire / Equipment per Head" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="be_var_type">Cost Type</label>
+                  <select id="be_var_type" required>
+                    <option value="fixed">Fixed Cost (£ total)</option>
+                    <option value="variable">Variable Cost (£ / attendee)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="be_var_initial">Initial Value (£)</label>
+                  <input type="number" id="be_var_i
