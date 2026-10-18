@@ -838,7 +838,7 @@
 
  <div id="dash-loading" class="loading">
  <div class="spinner"></div>
- <span>Collecting latest session data from Google Sheets... Please wait.</span>
+ <span>Collecting latest session data... Please wait.</span>
  </div>
 
  <div id="dash-content" style="display: none;">
@@ -907,7 +907,7 @@
  </div>
 
  <p style="margin-bottom: 1.25rem; color: #475569; font-size: 0.9rem;">
- Showing all session entries logged in Google Sheets. Use the search box above to filter by lead, group, or location.
+ Showing all session entries. Use the search box above to filter by lead, group, or location.
  </p>
 
  <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; max-height: 550px; -webkit-overflow-scrolling: touch;">
@@ -1776,7 +1776,7 @@
  <footer>
  <p>&copy; 2026 Stride Together CIC. Creating communities where no one Strides alone.</p>
  <p style="margin-top: 0.5rem; font-size: 0.88rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
- <a href="https://drive.google.com/file/d/1teJq4OaZrUEwR6Ogb72JX4aTt8oGktTu/view?usp=drive_link" target="_blank" style="color: var(--accent-teal); text-decoration: underline;">View Privacy Policy (PDF) ↗</a>
+ <a href="https://drive.google.com/file/d/1VMSaYOOyxjva7HIL9MHM21Lk_3t_DeEl/view?usp=drivesdk" target="_blank" style="color: var(--accent-teal); text-decoration: underline;">View Privacy Policy (PDF) ↗</a>
  </p>
  </footer>
 
@@ -2269,7 +2269,7 @@
  const statusMsg = document.getElementById(statusId);
  statusMsg.style.display = 'block';
  statusMsg.className = 'status-msg status-success';
- statusMsg.innerText = 'Submitting response to Google Sheets...';
+ statusMsg.innerText = 'Submitting response...';
 
  let payload = { formType: formType };
 
@@ -2411,7 +2411,7 @@
  cartItems = [];
  renderCart();
  } else {
- statusMsg.innerText = 'Success! Response saved directly into Google Sheets.';
+ statusMsg.innerText = 'Success! Response saved.';
  }
  e.target.reset();
  if (document.getElementById('sess_newParts')) document.getElementById('sess_newParts').value = '';
