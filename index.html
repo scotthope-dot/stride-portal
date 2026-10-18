@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stride Together CIC - Web Portal & Dashboard</title>
-  <!-- Deferred script loading to prevent render-blocking -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
   <style>
     :root {
       --primary-navy: #1F4E78;
@@ -41,7 +40,7 @@
 
     .brand-logo {
       height: 48px;
-      width: 48px;
+      width: auto;
       border-radius: 6px;
       object-fit: contain;
     }
@@ -392,7 +391,7 @@
 
   <header>
     <div class="brand">
-      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together Logo" class="brand-logo" width="48" height="48" loading="eager">
+      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together Logo" class="brand-logo">
       <h1>Stride Together <span>CIC</span></h1>
     </div>
     <div style="display: flex; align-items: center; gap: 1.25rem;">
@@ -400,6 +399,214 @@
         Help us keep sessions free for everyone. Any donation, big or small, makes a difference. Thankyou.
       </span>
       <a href="YOUR_COOP_BANK_PAYMENT_LINK_HERE" target="_blank" class="btn-donate" style="white-space: nowrap;">Donate</a>
+    </div>
+  </header>
+
+  <nav id="topNav">
+    <button class="nav-btn active" data-view="dashboard">Performance Dashboard</button>
+    <button class="nav-btn" data-view="sessions-list">View Sessions Log</button>
+    <button class="nav-btn" data-view="volunteer">[Form] Sessions Log</button>
+    <button class="nav-btn" data-view="health-check">[Form] Health (PAR-Q) & Registration</button>
+    <button class="nav-btn" data-view="feedback">[Form] Participant Feedback</button>
+    <button class="nav-btn" data-view="questionnaire">[Form] Client Intake Questionnaire</button>
+    <button class="nav-btn" data-view="staff">[Form] Grant Spend Tracker</button>
+    <button class="nav-btn" data-view="board">[Form] Governance Log</button>
+    <button class="nav-btn" data-view="merch">Community Merch Store</button>
+  </nav>
+
+  <main>
+    <!-- TAB 0: LIVE PERFORMANCE DASHBOARD -->
+    <section id="view-dashboard" class="section-card">
+      <div class="dashboard-header-controls">
+        <h2>Live Performance Dashboard</h2>
+        
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <div class="filter-group">
+            <label for="monthFilter">Month:</label>
+            <select id="monthFilter" onchange="applyFilters()">
+              <option value="ALL">All Months</option>
+            </select>
+          </div>
+          <button class="btn-submit" style="width: auto; padding: 0.4rem 0.9rem; font-size: 0.9rem;" onclick="loadDashboardData(true)">Refresh Data</button>
+        </div>
+      </div>
+
+      <div id="activeFilterBanner" class="active-filter-banner" style="display: none;">
+        <span>Active Drill-Down Filter: <strong id="filterCriteriaText">None</strong></span>
+        <button onclick="clearDrillDownFilter()">Clear Filter</button>
+      </div>
+
+      <div id="dash-loading" class="loading">
+        <div class="spinner"></div>
+        <span>Collecting latest session data from Google Sheets... Please wait.</span>
+      </div>
+
+      <div id="dash-content" style="display: none;">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-title">Total Participants</div>
+            <div class="kpi-value" id="kpi-total-parts">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Total Activity Sessions</div>
+            <div class="kpi-value" id="kpi-sessions">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Average Participants / Session</div>
+            <div class="kpi-value" id="kpi-avg-parts">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Hours Delivered</div>
+            <div class="kpi-value" id="kpi-hours">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Wellbeing Impact Score (WIS)</div>
+            <div class="kpi-value" id="kpi-wis">0.0</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Total Participants by Location (Click to Filter)</h3>
+            <div class="chart-container-sm">
+              <canvas id="locationChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>Total Participants by Group / Activity (Click to Filter)</h3>
+            <div class="chart-container-sm">
+              <canvas id="activityChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Month-by-Month Participants by Location & Overall Trend (Click Month/Bar to Filter)</h3>
+          <div class="chart-container-md">
+            <canvas id="monthlyTrendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Average Group Size by Activity (Click to Filter)</h3>
+          <div class="chart-container-md">
+            <canvas id="avgGroupChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: SESSIONS LOG TABLE VIEW -->
+    <section id="view-sessions-list" class="section-card" style="display: none;">
+      <div class="dashboard-header-controls">
+        <h2>Sessions Activity Log</h2>
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="sessionTableSearch" placeholder="🔍 Search sessions, leads, locations..." oninput="filterSessionTable()" style="padding: 0.45rem 0.8rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.9rem; min-width: 220px;">
+          <button class="btn-submit" style="width: auto; padding: 0.4rem 0.9rem; font-size: 0.9rem;" onclick="loadDashboardData(true)">Refresh Sheet Data</button>
+        </div>
+      </div>
+
+      <p style="margin-bottom: 1.25rem; color: #475569; font-size: 0.9rem;">
+        Showing all session entries logged in Google Sheets. Use the search box above to filter by lead, group, or location.
+      </p>
+
+      <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; max-height: 550px; -webkit-overflow-scrolling: touch;">
+        <table id="sessionsTable" style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+          <thead>
+            <tr style="background-color: var(--primary-navy); color: white; position: sticky; top: 0; z-index: 10;">
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Date</th>
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Location</th>
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Day / Time</th>
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Activity Group</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">Total Parts</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">Returning</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">New</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">Vols / Staff</th>
+              <th style="padding: 0.75rem 1rem; text-align: center; white-space: nowrap;">Hours</th>
+              <th style="padding: 0.75rem 1rem; white-space: nowrap;">Activity Lead</th>
+              <th style="padding: 0.75rem 1rem;">Notes / Feedback</th>
+            </tr>
+          </thead>
+          <tbody id="sessionsTableBody">
+            <tr>
+              <td colspan="11" style="text-align: center; padding: 2rem; color: #64748B;">
+                Loading session data...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 1: SESSIONS LOG FORM -->
+    <section id="view-volunteer" class="section-card" style="display: none;">
+      <h2>Input Session Data Log</h2>
+      <form onsubmit="submitForm(event, 'sessionLog', 'status-vol')">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sess_date">Session Date</label>
+            <input type="date" id="sess_date" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_location">Location</label>
+            <select id="sess_location" required>
+              <option value="Dover">Dover</option>
+              <option value="Folkestone">Folkestone</option>
+              <option value="Thanet">Thanet</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sess_dayTime">Day / Time</label>
+            <select id="sess_dayTime" required>
+              <option value="Weds Evening">Weds Evening</option>
+              <option value="Tues Evening">Tues Evening</option>
+              <option value="Sat Morning">Sat Morning</option>
+              <option value="Sun Morning">Sun Morning</option>
+              <option value="Weekday Morning">Weekday Morning</option>
+              <option value="Weekday Afternoon">Weekday Afternoon</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sess_group">Group / Activity</label>
+            <select id="sess_group" required>
+              <option value="Running Group">Running Group</option>
+              <option value="Walking Group">Walking Group</option>
+              <option value="Teenage Group">Teenage Group</option>
+              <option value="Cycling Group">Cycling Group</option>
+              <option value="Hyrox">Hyrox</option>
+              <option value="ParkRun">ParkRun</option>
+              <option value="Coffee Catchup">Coffee Catchup</option>
+              <option value="Social Meetup">Social Meetup</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="sess_totalParts">Total Participants</label>
+            <input type="number" id="sess_totalParts" min="0" placeholder="e.g. 7" oninput="calcNewParticipants()" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_returningParts">Returning Participants</label>
+            <input type="number" id="sess_returningParts" min="0" placeholder="e.g. 6" oninput="calcNewParticipants()" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_newParts">New Participants (Auto)</label>
+            <input type="number" id="sess_newParts" min="0" placeholder="0" readonly required>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="sess_volunteers">Volunteers / Staff</label>
+            <input type="number" id="sess_volunteers" min="1" placeholder="e.g. 1" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_hours">Hours Delivered</label>
+            <input type="number" id="sess_hours" step="0.25"     <a href="YOUR_COOP_BANK_PAYMENT_LINK_HERE" target="_blank" class="btn-donate" style="white-space: nowrap;">Donate</a>
     </div>
   </header>
 
