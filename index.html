@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stride Together CIC - Web Portal & Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0" defer></script>
   <style>
     :root {
       --primary-navy: #1F4E78;
@@ -40,7 +40,7 @@
 
     .brand-logo {
       height: 48px;
-      width: auto;
+      width: 48px;
       border-radius: 6px;
       object-fit: contain;
     }
@@ -304,32 +304,57 @@
 
     footer { text-align: center; padding: 2rem; color: #64748B; border-top: 1px solid var(--border-color); margin-top: 3rem; }
 
-    /* MOBILE RESPONSIVE OVERRIDES */
+    /* ==========================================================================
+       AMENDED MOBILE VIEW CODE ONLY
+       ========================================================================== */
     @media (max-width: 768px) {
       header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
         padding: 0.75rem 1rem;
         gap: 0.75rem;
       }
-      
-      header > div:last-child {
-        width: 100%;
-        justify-content: space-between;
+
+      .brand {
+        justify-content: flex-start;
       }
-      
+
+      .brand h1 {
+        font-size: 1.2rem;
+      }
+
+      header > div:last-child {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+
       header span {
-        display: none;
+        display: none; /* Hide top banner text on small mobile viewports */
+      }
+
+      .btn-donate {
+        width: 100%;
+        text-align: center;
+        padding: 0.65rem 1rem;
+        font-size: 0.95rem;
       }
 
       nav {
-        padding: 0.5rem;
+        padding: 0.5rem 0.75rem;
         gap: 0.5rem;
+        scrollbar-width: none; /* Firefox */
+      }
+      
+      nav::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
       }
 
       .nav-btn {
-        padding: 0.5rem 0.85rem;
+        padding: 0.6rem 0.9rem;
         font-size: 0.85rem;
+        min-height: 40px;
       }
 
       main {
@@ -340,49 +365,88 @@
       .section-card {
         padding: 1.25rem 1rem;
         margin-bottom: 1.25rem;
-        border-radius: 6px;
+        border-radius: 8px;
       }
 
+      .section-card h2 {
+        font-size: 1.25rem;
+      }
+
+      /* Stack form layouts vertically */
       .form-row, 
       .form-row-3 {
         grid-template-columns: 1fr !important;
         gap: 0.85rem;
       }
 
+      /* Prevent iOS auto-zoom on inputs */
+      .form-group input, 
+      .form-group select, 
+      .form-group textarea {
+        font-size: 16px !important;
+        padding: 0.75rem;
+        min-height: 44px;
+      }
+
+      .checkbox-item {
+        padding: 0.35rem 0;
+        font-size: 0.95rem;
+      }
+
+      .btn-submit {
+        padding: 0.85rem;
+        font-size: 1rem;
+        min-height: 48px;
+      }
+
+      /* Responsive KPIs */
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
       }
 
       .kpi-card {
-        min-height: 90px;
+        min-height: 95px;
         padding: 0.85rem;
       }
 
-      .kpi-value {
-        font-size: 1.25rem;
+      .kpi-title {
+        font-size: 0.7rem;
       }
 
+      .kpi-value {
+        font-size: 1.35rem;
+      }
+
+      /* Stack Charts */
       .charts-grid {
         grid-template-columns: 1fr !important;
         gap: 1rem;
       }
 
-      .chart-container-sm,
+      .chart-container-sm {
+        height: 220px !important;
+      }
+
       .chart-container-md {
-        height: 240px !important;
+        height: 250px !important;
       }
 
-      .form-group input, 
-      .form-group select, 
-      .form-group textarea {
-        font-size: 16px !important;
-        padding: 0.75rem;
+      .dashboard-header-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
       }
 
-      .btn-submit {
-        padding: 0.85rem;
-        font-size: 1rem;
+      .filter-group {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .filter-group select {
+        width: 70%;
+        min-height: 40px;
+        font-size: 16px;
       }
     }
   </style>
@@ -391,7 +455,7 @@
 
   <header>
     <div class="brand">
-      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together Logo" class="brand-logo">
+      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together Logo" class="brand-logo" width="48" height="48" loading="eager">
       <h1>Stride Together <span>CIC</span></h1>
     </div>
     <div style="display: flex; align-items: center; gap: 1.25rem;">
@@ -403,15 +467,15 @@
   </header>
 
   <nav id="topNav">
-    <button class="nav-btn active" data-view="dashboard">Performance Dashboard</button>
-    <button class="nav-btn" data-view="sessions-list">View Sessions Log</button>
-    <button class="nav-btn" data-view="volunteer">[Form] Sessions Log</button>
-    <button class="nav-btn" data-view="health-check">[Form] Health (PAR-Q) & Registration</button>
-    <button class="nav-btn" data-view="feedback">[Form] Participant Feedback</button>
-    <button class="nav-btn" data-view="questionnaire">[Form] Client Intake Questionnaire</button>
-    <button class="nav-btn" data-view="staff">[Form] Grant Spend Tracker</button>
-    <button class="nav-btn" data-view="board">[Form] Governance Log</button>
-    <button class="nav-btn" data-view="merch">Community Merch Store</button>
+    <button class="nav-btn active" onclick="switchView(this, 'dashboard')">Performance Dashboard</button>
+    <button class="nav-btn" onclick="switchView(this, 'sessions-list')">View Sessions Log</button>
+    <button class="nav-btn" onclick="switchView(this, 'volunteer')">[Form] Sessions Log</button>
+    <button class="nav-btn" onclick="switchView(this, 'health-check')">[Form] Health (PAR-Q) & Registration</button>
+    <button class="nav-btn" onclick="switchView(this, 'feedback')">[Form] Participant Feedback</button>
+    <button class="nav-btn" onclick="switchView(this, 'questionnaire')">[Form] Client Intake Questionnaire</button>
+    <button class="nav-btn" onclick="switchView(this, 'staff')">[Form] Grant Spend Tracker</button>
+    <button class="nav-btn" onclick="switchView(this, 'board')">[Form] Governance Log</button>
+    <button class="nav-btn" onclick="switchView(this, 'merch')">Community Merch Store</button>
   </nav>
 
   <main>
@@ -606,12 +670,44 @@
           </div>
           <div class="form-group">
             <label for="sess_hours">Hours Delivered</label>
-            <input type="number" id="sess_hours" step="0.25""margin-bottom: 1.25rem; color: #475569;">
+            <input type="number" id="sess_hours" step="0.25" placeholder="e.g. 1" required>
+          </div>
+          <div class="form-group">
+            <label for="sess_lead">Activity Lead / Instructor</label>
+            <select id="sess_lead" required>
+              <option value="Liam">Liam</option>
+              <option value="Jo">Jo</option>
+              <option value="Rachel">Rachel</option>
+              <option value="Scott H">Scott H</option>
+              <option value="Juste">Juste</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sess_notes">Notes / Feedback</label>
+            <textarea id="sess_notes" rows="2" placeholder="e.g. Record turnout, started rainy"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="sess_loggedBy">Session Logged By</label>
+            <input type="text" id="sess_loggedBy" placeholder="e.g. Scott H" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Session Log Entry</button>
+      </form>
+      <div id="status-vol" class="status-msg"></div>
+    </section>
+
+    <!-- TAB 2: PARTICIPANT REGISTRATION & PAR-Q FORM -->
+    <section id="view-health-check" class="section-card" style="display: none;">
+      <h2>Participant Registration, Health (PAR-Q) & Consent Waiver</h2>
+      <p style="margin-bottom: 1.25rem; color: #475569;">
         <strong>Important:</strong> Your health, safety, and wellbeing are our highest priorities. This form ensures our session leaders and coaches understand your physical readiness, adapt training sessions to your needs, and maintain proper duty-of-care standards across all community activities.
       </p>
 
       <form onsubmit="submitForm(event, 'healthCheck', 'status-hc')">
-        <!-- Section 1: Participant Information -->
         <h3 style="color: var(--primary-navy); margin: 1rem 0;">Section 1: Participant Information</h3>
         <div class="form-row">
           <div class="form-group">
@@ -646,7 +742,6 @@
           </div>
         </div>
 
-        <!-- Community Impact & Funder Reporting (Optional) -->
         <h4 style="color: var(--primary-navy); margin: 1rem 0 0.5rem 0;">Community Impact & Funder Reporting (Optional)</h4>
         <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.75rem;">
           To help us secure grant funding from partners to keep sessions accessible, please share:
@@ -671,7 +766,6 @@
           </div>
         </div>
 
-        <!-- Section 2: Session Selection & Community Goals -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 2: Session Selection & Community Goals</h3>
         <div class="form-group">
           <label>1. Which Stride Together sessions do you plan to attend? (Select all that apply)</label>
@@ -689,7 +783,6 @@
           <textarea id="hc_primaryGoals" rows="2" placeholder="e.g. Improve physical health, meet new people, build confidence" required></textarea>
         </div>
 
-        <!-- Section 3: Physical Activity Readiness Questionnaire (PAR-Q) -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 3: Physical Activity Readiness Questionnaire (PAR-Q)</h3>
         <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.75rem;">
           Please answer all questions accurately to ensure your safety during physical activity:
@@ -745,7 +838,6 @@
           <select id="parq_q9" required><option value="No">No</option><option value="Yes">Yes</option></select>
         </div>
 
-        <!-- Section 4: Media & Photography Release Consent -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 4: Media & Photography Release Consent</h3>
         <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.75rem;">
           Stride Together CIC regularly captures photographs, social media reels, and documentary footage to showcase community impact, report to grant funders, and inspire others to move.
@@ -758,7 +850,6 @@
           </select>
         </div>
 
-        <!-- Section 5: UK GDPR Privacy Notice & Explicit Data Consent -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 5: UK GDPR Privacy Notice & Explicit Data Consent</h3>
         <div class="privacy-notice-box">
           <strong>Data Controller & Statutory Registration:</strong> Personal data is collected and processed by Stride Together CIC, Company Registration No: 17243958, Registered Address: 33 Crabble Hill, Dover, Kent, CT17 0RX. Stride Together CIC is registered as a Data Controller with the Information Commissioner's Office (ICO Registration Certificate - ZC237149).<br><br>
@@ -775,7 +866,6 @@
           </label>
         </div>
 
-        <!-- Section 6: Participant Declaration & Sign-Off -->
         <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 6: Participant Declaration & Sign-Off</h3>
         <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem;">
           1. I confirm that I have answered all physical readiness questions truthfully and to the best of my knowledge.<br>
@@ -1069,187 +1159,6 @@
       </form>
       <div id="status-board" class="status-msg"></div>
     </section>
-
-    <!-- TAB 7: STRIDE TOGETHER MULTI-ITEM MERCHANDISE STORE -->
-    <section id="view-merch" class="section-card" style="display: none;">
-      <h2>Stride Together CIC Community Store</h2>
-      <p style="margin-bottom: 1.5rem; color: #475569;">
-        Wear your community pride! Select items below to build your order. All proceeds support free community run, walk, and wellbeing sessions.
-      </p>
-
-      <!-- Merch Grid -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-        
-        <!-- Item 1: Running Tee -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">APPAREL • ALL AGES</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Stride Breathable Tech Tee</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Lightweight, moisture-wicking athletic tee featuring the reflective Stride Together logo.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£18.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_1">
-                <option value="Youth S">Youth S</option>
-                <option value="Youth M/L">Youth M/L</option>
-                <option value="Adult S">Adult S</option>
-                <option value="Adult M" selected>Adult M</option>
-                <option value="Adult L">Adult L</option>
-                <option value="Adult XL">Adult XL</option>
-                <option value="Adult XXL">Adult XXL</option>
-              </select>
-              <input type="number" id="m_qty_1" value="1" min="1" max="10">
-            </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Stride Breathable Tech Tee', 18.00, 'm_size_1', 'm_qty_1')">+ Add to Order List</button>
-          </div>
-        </div>
-
-        <!-- Item 2: Community Hoodie -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #DCFCE7; color: #166534; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">WARM-UP • ALL AGES</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Cozy Post-Run Hoodie</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Soft cotton fleece hoodie with front pouch pocket and subtle embroidered logo.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£32.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_2">
-                <option value="Kids S">Kids S</option>
-                <option value="Kids M/L">Kids M/L</option>
-                <option value="Adult S">Adult S</option>
-                <option value="Adult M" selected>Adult M</option>
-                <option value="Adult L">Adult L</option>
-                <option value="Adult XL">Adult XL</option>
-                <option value="Adult XXL">Adult XXL</option>
-              </select>
-              <input type="number" id="m_qty_2" value="1" min="1" max="10">
-            </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Cozy Post-Run Hoodie', 32.00, 'm_size_2', 'm_qty_2')">+ Add to Order List</button>
-          </div>
-        </div>
-
-        <!-- Item 3: Water Bottle -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #FEF3C7; color: #92400E; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">EQUIPMENT • ESSENTIAL</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Stainless Steel Water Bottle (750ml)</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Double-wall insulated flask keeping drinks cold for 24 hours. Laser-etched logo.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£12.50</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_3">
-                <option value="Standard 750ml">Standard 750ml</option>
-              </select>
-              <input type="number" id="m_qty_3" value="1" min="1" max="10">
-            </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Stainless Steel Water Bottle', 12.50, 'm_size_3', 'm_qty_3')">+ Add to Order List</button>
-          </div>
-        </div>
-
-        <!-- Item 4: Run Cap / Beanie -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #F3E8FF; color: #6B21A8; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">ACCESSORIES</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Performance Headwear</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Choose between lightweight UV-protection running cap or winter beanie.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£10.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_4">
-                <option value="Run Cap (Navy)">Run Cap (Navy)</option>
-                <option value="Winter Beanie (Teal)">Winter Beanie (Teal)</option>
-              </select>
-              <input type="number" id="m_qty_4" value="1" min="1" max="10">
-            </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Performance Headwear', 10.00, 'm_size_4', 'm_qty_4')">+ Add to Order List</button>
-          </div>
-        </div>
-
-        <!-- Item 5: High-Vis Safety Bundle -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #FEE2E2; color: #991B1B; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">SAFETY & ACCESSORIES</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">High-Vis Night Safety Bundle</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Set of 2 rechargeable LED reflective armbands + drawstring kit bag.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£14.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_5">
-                <option value="Multi-Pack Set">Multi-Pack Set</option>
-              </select>
-              <input type="number" id="m_qty_5" value="1" min="1" max="10">
-            </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('High-Vis Night Safety Bundle', 14.00, 'm_size_5', 'm_qty_5')">+ Add to Order List</button>
-          </div>
-        </div>
-
-        <!-- Item 6: Youth Active Pack -->
-        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; width: fit-content; margin-bottom: 0.5rem;">KIDS & YOUTH</div>
-            <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.4rem;">Youth Stride Active Pack</h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">Includes youth-sized graphic tee, silicone bottle, and sticker sheet.</p>
-          </div>
-          <div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.5rem;">£20.00</div>
-            <div class="form-row" style="margin-bottom: 0.5rem;">
-              <select id="m_size_6">
-                <option value="Ages 5-8">Ages 5–8</option>
-                <option value="Ages 9-12">Ages 9–12</option>
-                <option value="Ages 13-15">Ages 13–15</option>
-              </select>
-              <input type="number" id="m_qty_6" value="1" min="1" max="10">
-            </div>
-            <button class="btn-submit" style="padding: 0.5rem;" onclick="addToCart('Youth Stride Active Pack', 20.00, 'm_size_6', 'm_qty_6')">+ Add to Order List</button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- MULTI-ITEM ORDER SUMMARY & CHECKOUT BOX -->
-      <div id="cartSummaryBox" style="background: #FFFFFF; border: 2px solid var(--accent-teal); border-radius: 8px; padding: 1.5rem; margin-top: 1rem;">
-        <h3 style="color: var(--primary-navy); margin-bottom: 0.75rem;">Selected Items in Order</h3>
-        
-        <div id="cartItemsList" style="margin-bottom: 1rem; color: #475569;">
-          <em>No items selected yet. Select options above and click "+ Add to Order List".</em>
-        </div>
-
-        <div style="border-top: 1px solid var(--border-color); padding-top: 0.75rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-          <strong style="font-size: 1.1rem; color: var(--primary-navy);">Total Amount:</strong>
-          <strong style="font-size: 1.25rem; color: var(--accent-teal);" id="cartTotalDisplay">£0.00</strong>
-        </div>
-
-        <form onsubmit="submitForm(event, 'merchOrder', 'status-merch')">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="merch_buyerName">Full Name *</label>
-              <input type="text" id="merch_buyerName" required>
-            </div>
-            <div class="form-group">
-              <label for="merch_buyerEmail">Email Address *</label>
-              <input type="email" id="merch_buyerEmail" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="merch_pickupLoc">Preferred Session Collection Location *</label>
-            <select id="merch_pickupLoc" required>
-              <option value="Dover Wednesday Run / Walk Session">Dover Wednesday Run / Walk Session</option>
-              <option value="Dover Saturday ParkRun">Dover Saturday ParkRun</option>
-              <option value="Dover Tuesday Hyrox">Dover Tuesday Hyrox</option>
-            </select>
-          </div>
-
-          <button type="submit" id="btnSubmitMerch" class="btn-submit" disabled>Submit Order Request</button>
-        </form>
-        <div id="status-merch" class="status-msg"></div>
-      </div>
-    </section>
   </main>
 
   <footer>
@@ -1269,14 +1178,11 @@
     let activityChartInst = null;
     let monthlyTrendChartInst = null;
     let avgGroupChartInst = null;
-    let cartItems = [];
 
     let activeDrillDown = {
       type: null, 
       value: null
     };
-
-    Chart.register(ChartDataLabels);
 
     const ACTIVITY_COLOR_MAP = {
       "Running Group":   "#1F4E78",
@@ -1296,75 +1202,38 @@
       "Unspecified": "#94A3B8"
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const navContainer = document.getElementById('topNav');
-      if (navContainer) {
-        navContainer.addEventListener('click', (e) => {
-          const btn = e.target.closest('.nav-btn');
-          if (!btn) return;
+    function switchView(btn, viewName) {
+      const views = [
+        'dashboard', 
+        'sessions-list', 
+        'volunteer', 
+        'health-check', 
+        'feedback', 
+        'questionnaire', 
+        'staff', 
+        'board'
+      ];
 
-          let viewName = btn.getAttribute('data-view');
-          if (!viewName) {
-            const onclickAttr = btn.getAttribute('onclick') || '';
-            const match = onclickAttr.match(/'([^']+)'/);
-            if (match) viewName = match[1];
-          }
-
-          if (viewName) {
-            switchView(btn, viewName);
-          }
-        });
-      }
-    });
-
-    function addToCart(title, price, sizeSelectId, qtyInputId) {
-      const sizeVal = document.getElementById(sizeSelectId).value;
-      const qtyVal = parseInt(document.getElementById(qtyInputId).value) || 1;
-
-      cartItems.push({
-        title: title,
-        price: price,
-        size: sizeVal,
-        quantity: qtyVal,
-        subtotal: price * qtyVal
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.style.display = 'none';
       });
 
-      renderCart();
-      document.getElementById('cartSummaryBox').scrollIntoView({ behavior: 'smooth' });
-    }
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
-    function removeFromCart(index) {
-      cartItems.splice(index, 1);
-      renderCart();
-    }
-
-    function renderCart() {
-      const listEl = document.getElementById('cartItemsList');
-      const totalEl = document.getElementById('cartTotalDisplay');
-      const submitBtn = document.getElementById('btnSubmitMerch');
-
-      if (cartItems.length === 0) {
-        listEl.innerHTML = '<em>No items selected yet. Select options above and click "+ Add to Order List".</em>';
-        totalEl.innerText = '£0.00';
-        submitBtn.disabled = true;
-        return;
+      if (btn) {
+        btn.classList.add('active');
       }
 
-      let total = 0;
-      let html = '<ul style="list-style: none; padding: 0;">';
-      
-      cartItems.forEach((item, idx) => {
-        total += item.subtotal;
-        html += `<li style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding: 0.4rem 0;">
-          <span><strong>${item.title}</strong> (${item.size}) x${item.quantity}</span>
-          <span>£${item.subtotal.toFixed(2)} <button type="button" onclick="removeFromCart(${idx})" style="background: none; border: none; color: #991B1B; cursor: pointer; font-weight: bold; margin-left: 0.5rem;">✕ Remove</button></span>
-        </li>`;
-      });
+      const targetEl = document.getElementById('view-' + viewName);
+      if (targetEl) {
+        targetEl.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
 
-      html += '</ul>';
-      listEl.innerHTML = html;
-      totalEl.innerText = '£' + total.toFixed(2);
-      submitBtn.disabled = false;
+      if (viewName === 'dashboard' || viewName === 'sessions-list') {
+        loadDashboardData(false);
+      }
     }
 
     function calcNewParticipants() {
@@ -1372,24 +1241,16 @@
       const returning = parseInt(document.getElementById('sess_returningParts').value) || 0;
       const newPartsInput = document.getElementById('sess_newParts');
 
+      if (returning > total) {
+        newPartsInput.style.borderColor = '#EF4444';
+      } else {
+        newPartsInput.style.borderColor = '#CBD5E1';
+      }
+
       let calculatedNew = total - returning;
       if (calculatedNew < 0) calculatedNew = 0;
 
       newPartsInput.value = calculatedNew;
-    }
-
-    function switchView(btn, viewName) {
-      const views = ['dashboard', 'sessions-list', 'volunteer', 'health-check', 'feedback', 'questionnaire', 'staff', 'board', 'merch'];
-      views.forEach(v => {
-        const el = document.getElementById('view-' + v);
-        if (el) el.style.display = (v === viewName) ? 'block' : 'none';
-      });
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-
-      if (viewName === 'dashboard' || viewName === 'sessions-list') {
-        loadDashboardData(false);
-      }
     }
 
     function parseDateToMmmYyyy(val) {
@@ -1482,11 +1343,20 @@
     }
 
     async function loadDashboardData(forceRefresh = false) {
-      if (!forceRefresh && rawDashboardData.length > 0) {
+      const CACHE_KEY = 'stride_dash_data';
+      const CACHE_TIME_KEY = 'stride_dash_time';
+      const CACHE_DURATION = 5 * 60 * 1000;
+
+      const cachedData = localStorage.getItem(CACHE_KEY);
+      const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+
+      if (!forceRefresh && cachedData && cachedTime && (Date.now() - cachedTime < CACHE_DURATION)) {
+        rawDashboardData = JSON.parse(cachedData);
+        populateMonthDropdown(rawDashboardData);
+        renderSessionsTable(rawDashboardData);
+        applyFilters();
         document.getElementById('dash-loading').style.display = 'none';
         document.getElementById('dash-content').style.display = 'block';
-        applyFilters();
-        renderSessionsTable(rawDashboardData);
         return;
       }
 
@@ -1501,6 +1371,10 @@
           rawDashboardData = (result.data || []).filter(row => 
             row['Session Date'] || row['Group / Activity'] || row['Location'] || row['Month'] || row['Timestamp']
           );
+          
+          localStorage.setItem(CACHE_KEY, JSON.stringify(rawDashboardData));
+          localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+
           populateMonthDropdown(rawDashboardData);
           renderSessionsTable(rawDashboardData);
           applyFilters();
@@ -1512,7 +1386,6 @@
       }
     }
 
-    // Explicitly pulls Session Date from Column B and formats clean dates
     function renderSessionsTable(data) {
       const tbody = document.getElementById('sessionsTableBody');
       if (!tbody) return;
@@ -1526,7 +1399,6 @@
       data.forEach((row, idx) => {
         const bgColor = (idx % 2 === 0) ? '#FFFFFF' : '#F8FAFC';
         
-        // Target Column B (Session Date) explicitly, ignoring Timestamp
         let rawDate = row['Session Date'] || row['sessionDate'] || row['Date'] || '-';
         let dateVal = formatDateOnly(rawDate);
 
@@ -1559,7 +1431,6 @@
       tbody.innerHTML = html;
     }
 
-    // Helper to extract DD/MM/YYYY dates from ISO date/time strings
     function formatDateOnly(val) {
       if (!val || val === '-') return '-';
       let s = val.toString().trim();
@@ -1655,6 +1526,12 @@
     }
 
     function processAndRenderData(data) {
+      if (typeof Chart === 'undefined') return;
+
+      if (Chart.defaults && ChartDataLabels) {
+        Chart.register(ChartDataLabels);
+      }
+
       let totalSessions = data.length;
       let totalParticipants = 0;
       let totalHours = 0;
@@ -1934,10 +1811,8 @@
         payload.emergencyPhone = document.getElementById('hc_emergPhone').value;
         payload.postcode = document.getElementById('hc_postcode').value;
         payload.ageBracket = document.getElementById('hc_ageBracket').value;
-        
         payload.sessionsPlanned = Array.from(document.querySelectorAll('input[name="hc_sessionsPlanned"]:checked')).map(cb => cb.value).join(", ");
         payload.primaryGoals = document.getElementById('hc_primaryGoals').value;
-
         payload.parq_q1 = document.getElementById('parq_q1').value;
         payload.parq_q2 = document.getElementById('parq_q2').value;
         payload.parq_q3 = document.getElementById('parq_q3').value;
@@ -1948,7 +1823,6 @@
         payload.parq_q8 = document.getElementById('parq_q8').value;
         payload.medicalNotes = document.getElementById('hc_medicalNotes').value;
         payload.parq_q9 = document.getElementById('parq_q9').value;
-
         payload.mediaConsent = document.getElementById('hc_mediaConsent').value;
         payload.explicitConsent = document.getElementById('hc_explicitConsent').checked ? 'YES' : 'NO';
         payload.signature = document.getElementById('hc_signature').value;
@@ -1989,7 +1863,6 @@
             let year = parseInt(dateParts[0], 10);
             let month = parseInt(dateParts[1], 10);
             let day = parseInt(dateParts[2], 10);
-
             let pad = (n) => n < 10 ? '0' + n : n;
             formattedDate = `${pad(day)}/${pad(month)}/${year}`;
             monthStr = `${MONTH_NAMES[month - 1]} ${year}`;
@@ -2026,40 +1899,18 @@
         payload.filingStatus = document.getElementById('gov_status').value;
         payload.actionNotes = document.getElementById('gov_notes').value;
       }
-      else if (formType === 'merchOrder') {
-        let totalVal = 0;
-        let summaryList = cartItems.map(item => {
-          totalVal += item.subtotal;
-          return `${item.title} (${item.size}) x${item.quantity}`;
-        }).join("; ");
-
-        payload.buyerName = document.getElementById('merch_buyerName').value;
-        payload.buyerEmail = document.getElementById('merch_buyerEmail').value;
-        payload.pickupLocation = document.getElementById('merch_pickupLoc').value;
-        payload.orderItemsSummary = summaryList;
-        payload.totalAmountGbp = totalVal.toFixed(2);
-        payload.cartItemsJson = JSON.stringify(cartItems);
-      }
-
-      const formData = new URLSearchParams();
-      for (const key in payload) {
-        formData.append(key, payload[key]);
-      }
 
       fetch(WEB_APP_URL, {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
       })
       .then(() => {
-        if (formType === 'merchOrder') {
-          statusMsg.innerText = 'Order request issued, we will be in contact to provide a payment link.';
-          cartItems = [];
-          renderCart();
-        } else {
-          statusMsg.innerText = 'Success! Response saved directly into Google Sheets.';
-        }
+        statusMsg.innerText = 'Success! Response saved directly into Google Sheets.';
         e.target.reset();
         if (document.getElementById('sess_newParts')) document.getElementById('sess_newParts').value = '';
+        localStorage.removeItem('stride_dash_data');
+        localStorage.removeItem('stride_dash_time');
         rawDashboardData = [];
       })
       .catch(err => {
@@ -2068,7 +1919,9 @@
       });
     }
 
-    loadDashboardData(false);
+    window.addEventListener('load', () => {
+      loadDashboardData(false);
+    });
   </script>
 </body>
 </html>
