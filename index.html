@@ -687,7 +687,7 @@
  <span style="font-size: 0.85rem; max-width: 340px; text-align: right; line-height: 1.3; opacity: 0.95;">
  Help us keep sessions accessible. Thank you.
  </span>
- <a href="YOUR_COOP_BANK_PAYMENT_LINK_HERE" target="_blank" class="btn-donate" style="white-space: nowrap;">Donate</a>
+<a href="javascript:void(0)" class="btn-donate" style="white-space: nowrap; opacity: 0.8; cursor: default;">Coming Soon</a>
  </div>
  </header>
 
@@ -699,30 +699,45 @@
  <p class="hero-subtitle">Health & Mental Wellbeing Through Community and Movement</p>
  <div class="hero-cta-group">
  <button class="btn-hero-primary" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Join a Free Session</button>
- <button class="btn-hero-secondary" onclick="switchView(document.querySelectorAll('.nav-btn')[1], 'dashboard')">Explore Live Impact</button>
+ <button class="btn-hero-secondary" onclick="switchView(document.querySelectorAll('.nav-btn')[2], 'feedback')">Give Feedback</button>
  </div>
  </div>
  </div>
 
- <!-- TOP NAVIGATION BAR -->
- <nav id="topNav">
- <button class="nav-btn" onclick="switchView(this, 'upcoming')">📅 Upcoming Sessions & Calendar</button>
- <button class="nav-btn active" onclick="switchView(this, 'dashboard')">Performance Dashboard</button>
- <button class="nav-btn" onclick="switchView(this, 'sessions-list')">View Sessions Log</button>
- <button class="nav-btn" onclick="switchView(this, 'volunteer')">[Form] Sessions Log</button>
- <button class="nav-btn" onclick="switchView(this, 'volunteer-reg')">[Form] Volunteer Registration</button>
- <button class="nav-btn" onclick="switchView(this, 'health-check')">[Form] Health (PAR-Q) & Registration</button>
- <button class="nav-btn" onclick="switchView(this, 'feedback')">[Form] Participant Feedback</button>
- <button class="nav-btn" onclick="switchView(this, 'questionnaire')">[Form] Client Intake Questionnaire</button>
- <button class="nav-btn" onclick="switchView(this, 'staff')">[Form] Grant Spend Tracker</button>
- <button class="nav-btn" onclick="switchView(this, 'board')">[Form] Governance Log</button>
- <button class="nav-btn" onclick="switchView(this, 'accident-log')">[Form] Accident & Incident Log</button>
- <button class="nav-btn" onclick="switchView(this, 'merch')">Community Merch Store</button>
- </nav>
+<!-- TOP NAVIGATION BAR CONTAINER -->
+ <div id="navContainer" style="background-color: #F1F5F9; border-bottom: 1px solid var(--border-color); padding: 0.5rem 1rem;">
+ 
+   <!-- SEGMENT TOGGLE (Hidden until unlocked) -->
+   <div id="navGroupToggle" style="display:none; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+     <button id="btnGroupPublic" onclick="toggleNavGroup('public')" class="nav-btn active" style="font-weight: 700; border-color: var(--primary-navy);">🌐 Public Views</button>
+     <button id="btnGroupInternal" onclick="toggleNavGroup('internal')" class="nav-btn" style="font-weight: 700;">⚙️ Internal Ops & Admin</button>
+   </div>
+
+   <nav id="topNav" style="display: flex; gap: 0.35rem; overflow-x: auto; border: none; padding: 0;">
+     <!-- Public Buttons Group -->
+     <div id="publicNavGroup" style="display: flex; gap: 0.35rem;">
+       <button class="nav-btn active" onclick="switchView(this, 'upcoming')">📅 Upcoming Sessions & Calendar</button>
+       <button class="nav-btn" onclick="switchView(this, 'health-check')">[Form] Health (PAR-Q) & Registration</button>
+       <button class="nav-btn" onclick="switchView(this, 'feedback')">[Form] Participant Feedback</button>
+     </div>
+
+     <!-- Internal Buttons Group (Hidden by default) -->
+     <div id="internalNavGroup" style="display: none; gap: 0.35rem;">
+       <button class="nav-btn" onclick="switchView(this, 'dashboard')">Performance Dashboard</button>
+       <button class="nav-btn" onclick="switchView(this, 'sessions-list')">View Sessions Log</button>
+       <button class="nav-btn" onclick="switchView(this, 'volunteer')">[Form] Sessions Log</button>
+       <button class="nav-btn" onclick="switchView(this, 'volunteer-reg')">[Form] Volunteer Registration</button>
+       <button class="nav-btn" onclick="switchView(this, 'accident-log')">[Form] Accident Log</button>
+       <button class="nav-btn" onclick="switchView(this, 'staff')">[Form] Grant Spend</button>
+       <button class="nav-btn" onclick="switchView(this, 'board')">[Form] Governance Log</button>
+       <button class="nav-btn" onclick="switchView(this, 'merch')">Merch Store</button>
+     </div>
+   </nav>
+ </div>
 
  <main>
  <!-- TAB: UPCOMING SESSIONS & COMMUNITY CALENDAR -->
- <section id="view-upcoming" class="section-card">
+ <section id="view-upcoming" class="section-card active-section">
  <h2>Upcoming Sessions & Community Calendar</h2>
  <p style="margin-bottom: 1.5rem; color: #475569;">
  Creating communities where no one Strides alone. Join any of our weekly run, walk, HYROX, or social sessions across Dover.
@@ -787,8 +802,8 @@
  </div>
  </div>
 
- <h3 style="color: var(--primary-navy); margin: 2rem 0 0.5rem 0;">Monthly Session Calendar Overview</h3>
- <div class="calendar-grid-container">
+<h3 style="color: var(--primary-navy); margin: 2rem 0 0.5rem 0;">Monthly Session Calendar Overview</h3>
+ <div class="calendar-grid-container" id="calendarGrid">
  <div class="calendar-day-header">Mon</div>
  <div class="calendar-day-header">Tue</div>
  <div class="calendar-day-header">Wed</div>
@@ -796,28 +811,12 @@
  <div class="calendar-day-header">Fri</div>
  <div class="calendar-day-header">Sat</div>
  <div class="calendar-day-header">Sun</div>
-
- <div class="calendar-day-cell"><span class="calendar-day-number">1</span></div>
- <div class="calendar-day-cell">
- <span class="calendar-day-number">2</span>
- <div class="calendar-event-tag">19:00 Hyrox (Legion)</div>
- </div>
- <div class="calendar-day-cell">
- <span class="calendar-day-number">3</span>
- <div class="calendar-event-tag">18:00 Run Club (Dover)</div>
- </div>
- <div class="calendar-day-cell"><span class="calendar-day-number">4</span></div>
- <div class="calendar-day-cell"><span class="calendar-day-number">5</span></div>
- <div class="calendar-day-cell">
- <span class="calendar-day-number">6</span>
- <div class="calendar-event-tag">08:45 ParkRun (Dover)</div>
- </div>
- <div class="calendar-day-cell"><span class="calendar-day-number">7</span></div>
+ <!-- Calendar day cells rendered dynamically via JavaScript -->
  </div>
  </section>
 
  <!-- TAB 0: LIVE PERFORMANCE DASHBOARD -->
- <section id="view-dashboard" class="section-card active-section">
+<section id="view-dashboard" class="section-card">
  <div class="dashboard-header-controls">
  <h2>Live Performance Dashboard</h2>
  
@@ -1047,7 +1046,7 @@
       <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.25rem;">📖 Stride Together Volunteer Handbook</h3>
       <p style="font-size: 0.9rem; color: #0369A1; margin: 0;">Please review our volunteer guidance, safety procedures, and role expectations prior to joining our team.</p>
     </div>
-    <a href="https://drive.google.com/file/d/1RpqUnUbLN7bVHNkJaDI2FDBBBWSwv8hH/view?usp=sharing" target="_blank" class="btn-donate" style="white-space: nowrap; font-size: 0.9rem; padding: 0.5rem 1.25rem;">View Volunteer Handbook ↗</a>
+    <a href="https://drive.google.com/file/d/1RpqUnUbLN7bVHNkJaDI2FDBBBWSwv8hH/view?usp=sharing" target="_blank" class="btn-submit" style="white-space: nowrap; font-size: 0.9rem; padding: 0.5rem 1.25rem; width: auto;">View Volunteer Handbook ↗</a>style="white-space: nowrap; font-size: 0.9rem; padding: 0.5rem 1.25rem;">View Volunteer Handbook ↗</a>
   </div>
 
   <form onsubmit="submitForm(event, 'volunteerReg', 'status-vol-reg')">
@@ -1509,42 +1508,7 @@
  <div id="status-fb" class="status-msg"></div>
  </section>
 
- <!-- TAB 5: CLIENT QUESTIONNAIRE FORM -->
- <section id="view-questionnaire" class="section-card">
- <h2>Client Intake Questionnaire</h2>
- <form onsubmit="submitForm(event, 'questionnaire', 'status-q')">
- <div class="form-row">
- <div class="form-group"><label>Full Name</label><input type="text" id="q_fullName" required></div>
- <div class="form-group"><label>Email Address</label><input type="email" id="q_email" required></div>
- </div>
-
- <div class="form-group">
- <label>Main goals for joining Stride Together CIC:</label>
- <div class="checkbox-group">
- <label class="checkbox-item"><input type="checkbox" name="q_goals" value="Physical Fitness"> Physical Fitness</label>
- <label class="checkbox-item"><input type="checkbox" name="q_goals" value="Mental Wellbeing"> Mental Wellbeing</label>
- <label class="checkbox-item"><input type="checkbox" name="q_goals" value="Social Connection"> Social Connection</label>
- <label class="checkbox-item"><input type="checkbox" name="q_goals" value="Event Training"> Event Training (Hyrox/ParkRun)</label>
- </div>
- </div>
-
- <div class="form-group">
- <label>Current Activity Level:</label>
- <select id="q_activityLevel" required>
- <option value="Not currently active">Not currently active</option>
- <option value="Lightly active (1-2x/week)">Lightly active (1-2x/week)</option>
- <option value="Moderately active (3-4x/week)">Moderately active (3-4x/week)</option>
- <option value="Very active (5+x/week)">Very active (5+x/week)</option>
- </select>
- </div>
-
- <div class="form-group"><label>How can we best support you during sessions?</label><textarea id="q_supportNotes" rows="2"></textarea></div>
-
- <button type="submit" class="btn-submit">Submit Intake Questionnaire</button>
- </form>
- <div id="status-q" class="status-msg"></div>
- </section>
-
+ 
  <!-- TAB 6: GRANT SPEND FORM -->
  <section id="view-staff" class="section-card">
  <h2>Point-of-Purchase Expense & Grant Spend Tracker</h2>
@@ -1856,14 +1820,125 @@
  </section>
  </main>
 
- <footer>
+<footer>
  <p>&copy; 2026 Stride Together CIC. Creating communities where no one Strides alone.</p>
  <p style="margin-top: 0.5rem; font-size: 0.88rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
  <a href="https://drive.google.com/file/d/1zHs2K14EHY4f7GMihE0SpNYwbwVUUPOI/view?usp=sharing" target="_blank" style="color: var(--accent-teal); text-decoration: underline;">View Privacy Policy (PDF) ↗</a>
+ <a href="javascript:void(0)" onclick="unlockInternalAccess()" style="color: #94A3B8; text-decoration: underline;">Staff / Director Access 🔒</a>
  </p>
  </footer>
 
+
+
  <script>
+
+function renderUpcomingCalendar() {
+ const grid = document.getElementById('calendarGrid');
+ if (!grid) return;
+
+ // Set baseline to current date (October 19, 2026)
+ const today = new Date(2026, 9, 19); 
+ const currentYear = today.getFullYear();
+ const currentMonth = today.getMonth(); // 9 = October
+ const startDay = today.getDate(); // 19
+ const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate(); // 31
+
+ // Align first cell to correct weekday column (0 = Mon, 6 = Sun)
+ let startDayOfWeek = today.getDay() - 1;
+ if (startDayOfWeek === -1) startDayOfWeek = 6;
+
+ // Clear existing cells, keep day headers
+ grid.innerHTML = `
+ <div class="calendar-day-header">Mon</div>
+ <div class="calendar-day-header">Tue</div>
+ <div class="calendar-day-header">Wed</div>
+ <div class="calendar-day-header">Thu</div>
+ <div class="calendar-day-header">Fri</div>
+ <div class="calendar-day-header">Sat</div>
+ <div class="calendar-day-header">Sun</div>
+ `;
+
+ // Insert blank offset cells
+ for (let i = 0; i < startDayOfWeek; i++) {
+ const emptyCell = document.createElement('div');
+ emptyCell.className = 'calendar-day-cell';
+ emptyCell.style.background = '#F1F5F9';
+ grid.appendChild(emptyCell);
+ }
+
+// Scheduled weekly community sessions
+ const scheduledEvents = {
+ 2: ["19:00 Hyrox (Legion)"], // Tuesdays
+ 3: [
+ "18:00 Run Club (Dover)",
+ "18:00 Walk Club (Dover)",
+ "18:00 Teenage Club (Dover)"
+ ], // Wednesdays
+ 6: ["08:45 ParkRun (Dover)"] // Saturdays
+ };
+
+ // Render remaining days of the month
+ for (let day = startDay; day <= lastDayOfMonth; day++) {
+ const dateObj = new Date(currentYear, currentMonth, day);
+ let dayOfWeek = dateObj.getDay(); 
+
+ const cell = document.createElement('div');
+ cell.className = 'calendar-day-cell';
+
+ let cellHtml = `<span class="calendar-day-number">${day}</span>`;
+ if (scheduledEvents[dayOfWeek]) {
+ cellHtml += `<div class="calendar-event-tag">${scheduledEvents[dayOfWeek]}</div>`;
+ }
+
+ cell.innerHTML = cellHtml;
+ grid.appendChild(cell);
+ }
+ }
+
+ window.addEventListener('load', () => {
+ renderUpcomingCalendar();
+ });
+
+function unlockInternalAccess() {
+   const password = prompt("Enter Internal Operations Password:");
+   if (password === "Stride2026") {
+     document.getElementById('navGroupToggle').style.display = 'flex';
+     alert("Internal Ops mode unlocked!");
+     toggleNavGroup('internal');
+   } else if (password !== null) {
+     alert("Incorrect password.");
+   }
+ }
+
+ function toggleNavGroup(group) {
+   const publicGrp = document.getElementById('publicNavGroup');
+   const internalGrp = document.getElementById('internalNavGroup');
+   const btnPub = document.getElementById('btnGroupPublic');
+   const btnInt = document.getElementById('btnGroupInternal');
+
+   if (group === 'internal') {
+     publicGrp.style.display = 'none';
+     internalGrp.style.display = 'flex';
+     
+     btnInt.classList.add('active');
+     btnPub.classList.remove('active');
+     
+     // Default to dashboard when switching to internal mode
+     const firstIntBtn = internalGrp.querySelector('.nav-btn');
+     switchView(firstIntBtn, 'dashboard');
+   } else {
+     internalGrp.style.display = 'none';
+     publicGrp.style.display = 'flex';
+     
+     btnPub.classList.add('active');
+     btnInt.classList.remove('active');
+     
+     // Default to upcoming calendar when switching back to public mode
+     const firstPubBtn = publicGrp.querySelector('.nav-btn');
+     switchView(firstPubBtn, 'upcoming');
+   }
+ }
+
  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzug8chhJFkhgRR04mfdboeFx2StviXRxcFEPMNlDPHF6LXhlhczjp2t3RxBibxFXWarw/exec";
 
  const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -1946,7 +2021,7 @@
  }
 
  function switchView(btn, viewName) {
- const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer-reg', 'health-check', 'feedback', 'questionnaire', 'staff', 'board', 'accident-log', 'merch'];
+const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer-reg', 'health-check', 'feedback', 'staff', 'board', 'accident-log', 'merch'];
 
  views.forEach(v => {
  const el = document.getElementById('view-' + v);
@@ -2416,13 +2491,7 @@ else if (formType === 'volunteerReg') {
  payload.fullName = document.getElementById('fb_fullName').value || 'Anonymous';
  payload.email = document.getElementById('fb_email').value || 'Not provided';
  } 
- else if (formType === 'questionnaire') {
- payload.fullName = document.getElementById('q_fullName').value;
- payload.email = document.getElementById('q_email').value;
- payload.goals = Array.from(document.querySelectorAll('input[name="q_goals"]:checked')).map(cb => cb.value).join(", ");
- payload.activityLevel = document.getElementById('q_activityLevel').value;
- payload.supportNotes = document.getElementById('q_supportNotes').value;
- }
+
  else if (formType === 'sessionLog') {
  let rawDate = document.getElementById('sess_date').value;
  let formattedDate = '';
