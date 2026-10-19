@@ -716,6 +716,7 @@
  <button class="nav-btn" onclick="switchView(this, 'questionnaire')">[Form] Client Intake Questionnaire</button>
  <button class="nav-btn" onclick="switchView(this, 'staff')">[Form] Grant Spend Tracker</button>
  <button class="nav-btn" onclick="switchView(this, 'board')">[Form] Governance Log</button>
+ <button class="nav-btn" onclick="switchView(this, 'accident-log')">[Form] Accident & Incident Log</button>
  <button class="nav-btn" onclick="switchView(this, 'merch')">Community Merch Store</button>
  </nav>
 
@@ -1593,6 +1594,70 @@
  <div id="status-board" class="status-msg"></div>
  </section>
 
+ <!-- TAB: ACCIDENT & INCIDENT LOG FORM -->
+ <section id="view-accident-log" class="section-card">
+ <h2>Digital Accident & Incident Book</h2>
+ <p style="margin-bottom: 1.25rem; color: #475569;">
+ Record any accidents, injuries, or near-misses occurring during Stride Together CIC activities in compliance with health, safety, and insurance standards.
+ </p>
+
+ <form onsubmit="submitForm(event, 'accidentLog', 'status-acc')">
+ <div class="form-row">
+ <div class="form-group">
+ <label for="acc_dateTime">Date & Time *</label>
+ <input type="datetime-local" id="acc_dateTime" required>
+ </div>
+ <div class="form-group">
+ <label for="acc_locationSession">Location / Session *</label>
+ <input type="text" id="acc_locationSession" placeholder="e.g. Sunday Run Club (Promenade)" required>
+ </div>
+ </div>
+
+ <div class="form-row">
+ <div class="form-group">
+ <label for="acc_personInvolved">Person Involved *</label>
+ <select id="acc_personInvolved" required>
+ <option value="Participant (Adult)">Participant (Adult)</option>
+ <option value="Participant (Youth/SEND)">Participant (Youth/SEND)</option>
+ <option value="Volunteer / Leader">Volunteer / Leader</option>
+ <option value="Member of Public">Member of Public</option>
+ </select>
+ </div>
+ <div class="form-group">
+ <label for="acc_riddor">RIDDOR Reportable? *</label>
+ <select id="acc_riddor" required>
+ <option value="No">No</option>
+ <option value="Yes">Yes</option>
+ </select>
+ </div>
+ </div>
+
+ <div class="form-group">
+ <label for="acc_description">Incident Description & Cause *</label>
+ <textarea id="acc_description" rows="3" placeholder="e.g. Minor trip on kerb resulting in grazed knee" required></textarea>
+ </div>
+
+ <div class="form-group">
+ <label for="acc_actionAdministered">Action / First Aid Administered *</label>
+ <textarea id="acc_actionAdministered" rows="2" placeholder="e.g. Cold compress & plaster applied by Juste (First Aider)" required></textarea>
+ </div>
+
+ <div class="form-row">
+ <div class="form-group">
+ <label for="acc_reportedTo">Reported to Director / DSL *</label>
+ <input type="text" id="acc_reportedTo" placeholder="e.g. Yes - Liam notified" required>
+ </div>
+ <div class="form-group">
+ <label for="acc_followUp">Follow-Up Action *</label>
+ <input type="text" id="acc_followUp" placeholder="e.g. Kerb hazard highlighted in pre-run briefing" required>
+ </div>
+ </div>
+
+ <button type="submit" class="btn-submit">Submit Accident Report</button>
+ </form>
+ <div id="status-acc" class="status-msg"></div>
+ </section>
+
  <!-- TAB 8: STRIDE TOGETHER MULTI-ITEM MERCHANDISE STORE -->
  <section id="view-merch" class="section-card">
  <h2>Stride Together CIC Community Store</h2>
@@ -1863,7 +1928,7 @@
  }
 
  function switchView(btn, viewName) {
- const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer-reg', 'health-check', 'feedback', 'questionnaire', 'staff', 'board', 'merch'];
+ const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer-reg', 'health-check', 'feedback', 'questionnaire', 'staff', 'board', 'accident-log', 'merch'];
 
  views.forEach(v => {
  const el = document.getElementById('view-' + v);
@@ -2380,6 +2445,16 @@
  payload.dueDate = document.getElementById('gov_dueDate').value;
  payload.filingStatus = document.getElementById('gov_status').value;
  payload.actionNotes = document.getElementById('gov_notes').value;
+ }
+ else if (formType === 'accidentLog') {
+ payload.dateTime = document.getElementById('acc_dateTime').value;
+ payload.locationSession = document.getElementById('acc_locationSession').value;
+ payload.personInvolved = document.getElementById('acc_personInvolved').value;
+ payload.riddor = document.getElementById('acc_riddor').value;
+ payload.description = document.getElementById('acc_description').value;
+ payload.actionAdministered = document.getElementById('acc_actionAdministered').value;
+ payload.reportedTo = document.getElementById('acc_reportedTo').value;
+ payload.followUp = document.getElementById('acc_followUp').value;
  }
  else if (formType === 'merchOrder') {
  let totalVal = 0;
