@@ -2382,17 +2382,23 @@
  payload.signature = document.getElementById('hc_signature').value;
  payload.declarationDate = document.getElementById('hc_declarationDate').value;
  } 
- else if (formType === 'volunteerReg') {
- payload.fullName = document.getElementById('vr_fullName').value;
- payload.email = document.getElementById('vr_email').value;
- payload.phone = document.getElementById('vr_phone').value;
- payload.location = document.getElementById('vr_location').value;
- payload.rolesInterested = Array.from(document.querySelectorAll('input[name="vr_roles"]:checked')).map(cb => cb.value).join(", ");
- payload.availability = document.getElementById('vr_availability').value;
- payload.dbsCheck = document.getElementById('vr_dbsCheck').value;
- payload.experienceNotes = document.getElementById('vr_experience').value;
- payload.agreedHandbook = document.getElementById('vr_agreedHandbook').checked ? 'YES' : 'NO';
- }
+else if (formType === 'volunteerReg') {
+    payload.fullName = document.getElementById('vr_fullName').value;
+    payload.email = document.getElementById('vr_email').value;
+    payload.phone = document.getElementById('vr_phone').value;
+    payload.location = document.getElementById('vr_location').value;
+    
+    // ADDED: Emergency Contact & Medical Notes Payload Mapping
+    payload.emergName = document.getElementById('vr_emergName').value;
+    payload.emergPhone = document.getElementById('vr_emergPhone').value;
+    payload.medicalNotes = document.getElementById('vr_medicalNotes').value;
+
+    payload.rolesInterested = Array.from(document.querySelectorAll('input[name="vr_roles"]:checked')).map(cb => cb.value).join(", ");
+    payload.availability = document.getElementById('vr_availability').value;
+    payload.dbsCheck = document.getElementById('vr_dbsCheck').value;
+    payload.experienceNotes = document.getElementById('vr_experience').value;
+    payload.agreedHandbook = document.getElementById('vr_agreedHandbook').checked ? 'YES' : 'NO';
+  }
  else if (formType === 'feedback') {
  payload.activityGroup = document.getElementById('fb_activityGroup').value;
  payload.location = document.getElementById('fb_location').value;
