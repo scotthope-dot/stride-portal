@@ -251,8 +251,25 @@
  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
 
- .checkbox-group { display: flex; flex-direction: column; gap: 0.5rem; }
- .checkbox-item { display: flex; align-items: center; gap: 0.5rem; font-weight: normal; cursor: pointer; }
+ .checkbox-group { display: flex; flex-direction: column; gap: 0.65rem; }
+ .checkbox-item { 
+ display: flex; 
+ align-items: flex-start; 
+ gap: 0.65rem; 
+ font-weight: normal; 
+ cursor: pointer; 
+ line-height: 1.4;
+ }
+ .checkbox-item input[type="checkbox"] {
+ width: 1.1rem;
+ height: 1.1rem;
+ min-width: 1.1rem;
+ min-height: 1.1rem;
+ margin-top: 0.15rem;
+ flex-shrink: 0;
+ cursor: pointer;
+ accent-color: var(--accent-teal);
+ }
 
  .privacy-notice-box {
  background-color: #E0F2FE;
@@ -995,7 +1012,7 @@
  </div>
  <div class="form-group">
  <label for="sess_newParts">New Participants (Auto)</label>
- <input type="number" id="sess_newParts" min="0" placeholder="0" readonly required>
+ <input type="number" id="sess_newParts" min="0" value="0" placeholder="0" readonly required>
  </div>
  </div>
 
@@ -1027,7 +1044,12 @@
  </div>
  <div class="form-group">
  <label for="sess_loggedBy">Session Logged By</label>
- <input type="text" id="sess_loggedBy" placeholder="e.g. Scott H" required>
+ <select id="sess_loggedBy" required>
+ <option value="Liam">Liam</option>
+ <option value="Jo">Jo</option>
+ <option value="Juste">Juste</option>
+ <option value="Scott">Scott</option>
+ </select>
  </div>
  </div>
 
@@ -2066,13 +2088,13 @@ const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer
  });
  }
 
- function calcNewParticipants() {
+function calcNewParticipants() {
  const total = parseInt(document.getElementById('sess_totalParts').value) || 0;
  const returning = parseInt(document.getElementById('sess_returningParts').value) || 0;
  const newPartsInput = document.getElementById('sess_newParts');
 
- let calculatedNew = total - returning;
- if (calculatedNew < 0) calculatedNew = 0;
+ // Cap minimum value strictly at 0 using Math.max
+ let calculatedNew = Math.max(0, total - returning);
 
  newPartsInput.value = calculatedNew;
  }
@@ -2524,7 +2546,17 @@ else if (formType === 'volunteerReg') {
  payload.email = document.getElementById('fb_email').value || 'Not provided';
  } 
 
- else if (formType === 'sessionLog') {
+else if (formType === 'sessionLog') {
+ const total = parseInt(document.getElementById('sess_totalParts').value) || 0;
+ const returning = parseInt(document.getElementById('sess_returningParts').value) || 0;
+
+ if (returning > total) {
+ statusMsg.className = 'status-msg status-error';
+ statusMsg.innerText = 'Error: Returning participants cannot be greater than total participants.';
+ statusMsg.style.display = 'block';
+ return; // Prevents logging to backend
+ }
+
  let rawDate = document.getElementById('sess_date').value;
  let formattedDate = '';
  let monthStr = '';
