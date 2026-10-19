@@ -1037,102 +1037,120 @@
  <div id="status-vol" class="status-msg"></div>
  </section>
 
- <!-- TAB: VOLUNTEER REGISTRATION FORM & HANDBOOK LINK -->
- <section id="view-volunteer-reg" class="section-card">
- <h2>Volunteer Registration & Opportunities</h2>
- 
- <!-- VOLUNTEER HANDBOOK PROMINENT CALLOUT BOX -->
- <div style="background-color: #E0F2FE; border: 1px solid #BAE6FD; border-left: 5px solid var(--accent-teal); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
- <div>
- <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.25rem;">📖 Stride Together Volunteer Handbook</h3>
- <p style="font-size: 0.9rem; color: #0369A1; margin: 0;">Please review our volunteer guidance, safety procedures, and role expectations prior to joining our team.</p>
- </div>
- <a href="https://drive.google.com/file/d/1RpqUnUbLN7bVHNkJaDI2FDBBBWSwv8hH/view?usp=sharing" target="_blank" class="btn-donate" style="white-space: nowrap; font-size: 0.9rem; padding: 0.5rem 1.25rem;">View Volunteer Handbook ↗</a>
- </div>
+<!-- TAB: VOLUNTEER REGISTRATION FORM & HANDBOOK LINK -->
+<section id="view-volunteer-reg" class="section-card">
+  <h2>Volunteer Registration & Opportunities</h2>
+  
+  <!-- VOLUNTEER HANDBOOK PROMINENT CALLOUT BOX -->
+  <div style="background-color: #E0F2FE; border: 1px solid #BAE6FD; border-left: 5px solid var(--accent-teal); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.25rem;">📖 Stride Together Volunteer Handbook</h3>
+      <p style="font-size: 0.9rem; color: #0369A1; margin: 0;">Please review our volunteer guidance, safety procedures, and role expectations prior to joining our team.</p>
+    </div>
+    <a href="https://drive.google.com/file/d/1RpqUnUbLN7bVHNkJaDI2FDBBBWSwv8hH/view?usp=sharing" target="_blank" class="btn-donate" style="white-space: nowrap; font-size: 0.9rem; padding: 0.5rem 1.25rem;">View Volunteer Handbook ↗</a>
+  </div>
 
- <form onsubmit="submitForm(event, 'volunteerReg', 'status-vol-reg')">
- <h3 style="color: var(--primary-navy); margin-bottom: 1rem;">Personal Details</h3>
- 
- <div class="form-row">
- <div class="form-group">
- <label for="vr_fullName">Full Name *</label>
- <input type="text" id="vr_fullName" placeholder="e.g. Alex Morgan" required>
- </div>
- <div class="form-group">
- <label for="vr_email">Email Address *</label>
- <input type="email" id="vr_email" placeholder="e.g. alex@example.com" required>
- </div>
- </div>
+  <form onsubmit="submitForm(event, 'volunteerReg', 'status-vol-reg')">
+    <h3 style="color: var(--primary-navy); margin-bottom: 1rem;">Personal Details</h3>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="vr_fullName">Full Name *</label>
+        <input type="text" id="vr_fullName" placeholder="e.g. Alex Morgan" required>
+      </div>
+      <div class="form-group">
+        <label for="vr_email">Email Address *</label>
+        <input type="email" id="vr_email" placeholder="e.g. alex@example.com" required>
+      </div>
+    </div>
 
- <div class="form-row">
- <div class="form-group">
- <label for="vr_phone">Phone Number *</label>
- <input type="tel" id="vr_phone" placeholder="e.g. 07123456789" required>
- </div>
- <div class="form-group">
- <label for="vr_location">Preferred Location / Area *</label>
- <select id="vr_location" required>
- <option value="Dover">Dover</option>
- <option value="Folkestone">Folkestone</option>
- <option value="Thanet">Thanet</option>
- <option value="All / Flexible">All Areas Across Kent</option>
- </select>
- </div>
- </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="vr_phone">Phone Number *</label>
+        <input type="tel" id="vr_phone" placeholder="e.g. 07123456789" required>
+      </div>
+      <div class="form-group">
+        <label for="vr_location">Preferred Location / Area *</label>
+        <select id="vr_location" required>
+          <option value="Dover">Dover</option>
+          <option value="Folkestone">Folkestone</option>
+          <option value="Thanet">Thanet</option>
+          <option value="All / Flexible">All Areas Across Kent</option>
+        </select>
+      </div>
+    </div>
 
- <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Volunteer Roles & Interests</h3>
- 
- <div class="form-group">
- <label>Which volunteer roles are you interested in? (Select all that apply) *</label>
- <div class="checkbox-group">
- <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="Session Lead"> Session Lead</label>
- <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="Session Support"> Session Support</label>
- <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="First Aider / Safety Officer"> First Aider / Safety Officer</label>
- <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="Event Welcome & Check-In Host"> Event Welcome & Check-In Host</label>
- <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="Social Media & Photography"> Social Media & Photography</label>
- <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="General Operational Support"> General Operational Support</label>
- </div>
- </div>
+    <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Emergency Contact & Health Details</h3>
 
- <div class="form-row">
- <div class="form-group">
- <label for="vr_availability">General Availability *</label>
- <select id="vr_availability" required>
- <option value="Weekday Evenings (e.g. Weds Run Club)">Weekday Evenings (e.g. Weds Run Club)</option>
- <option value="Weekend Mornings (e.g. Sat ParkRun)">Weekend Mornings (e.g. Sat ParkRun)</option>
- <option value="Flexible / As Needed">Flexible / As Needed</option>
- </select>
- </div>
- <div class="form-group">
- <label for="vr_dbsCheck">Do you hold a current DBS Certificate?</label>
- <select id="vr_dbsCheck">
- <option value="No">No</option>
- <option value="Yes - Enhanced DBS">Yes - Enhanced DBS</option>
- <option value="Yes - Standard DBS">Yes - Standard DBS</option>
- </select>
- </div>
- </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="vr_emergName">Emergency Contact Name & Relationship *</label>
+        <input type="text" id="vr_emergName" placeholder="e.g. Sarah Morgan (Spouse)" required>
+      </div>
+      <div class="form-group">
+        <label for="vr_emergPhone">Emergency Contact Phone Number *</label>
+        <input type="tel" id="vr_emergPhone" placeholder="e.g. 07987654321" required>
+      </div>
+    </div>
 
- <div class="form-group">
- <label for="vr_experience">Relevant Experience, Qualifications or Skills:</label>
- <textarea id="vr_experience" rows="2" placeholder="e.g. First aid qualified, athletics leader certification, group fitness experience"></textarea>
- </div>
+    <div class="form-group">
+      <label for="vr_medicalNotes">Relevant Medical Conditions / Accessibility Needs:</label>
+      <textarea id="vr_medicalNotes" rows="2" placeholder="Please declare any health conditions, allergies, or support needs relevant to on-site volunteering..."></textarea>
+    </div>
 
- <div class="privacy-notice-box">
- <strong>UK GDPR Notice:</strong> Personal details provided in this registration form will be processed by Stride Together CIC solely for volunteer onboarding, safeguarding, and session coordination.
- </div>
+    <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Volunteer Roles & Interests</h3>
+    
+    <div class="form-group">
+      <label>Which volunteer roles are you interested in? (Select all that apply) *</label>
+      <div class="checkbox-group">
+        <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="Session Lead"> Session Lead</label>
+        <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="Session Support"> Session Support</label>
+        <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="First Aider / Safety Officer"> First Aider / Safety Officer</label>
+        <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="Event Welcome & Check-In Host"> Event Welcome & Check-In Host</label>
+        <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="Social Media & Photography"> Social Media & Photography</label>
+        <label class="checkbox-item"><input type="checkbox" name="vr_roles" value="General Operational Support"> General Operational Support</label>
+      </div>
+    </div>
 
- <div class="form-group">
- <label class="checkbox-item">
- <input type="checkbox" id="vr_agreedHandbook" required>
- <span>I confirm I have accessed the Stride Together Volunteer Handbook link above and agree to uphold our community standards and safety practices. *</span>
- </label>
- </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="vr_availability">General Availability *</label>
+        <select id="vr_availability" required>
+          <option value="Weekday Evenings (e.g. Weds Run Club)">Weekday Evenings (e.g. Weds Run Club)</option>
+          <option value="Weekend Mornings (e.g. Sat ParkRun)">Weekend Mornings (e.g. Sat ParkRun)</option>
+          <option value="Flexible / As Needed">Flexible / As Needed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="vr_dbsCheck">Do you hold a current DBS Certificate?</label>
+        <select id="vr_dbsCheck">
+          <option value="No">No</option>
+          <option value="Yes - Enhanced DBS">Yes - Enhanced DBS</option>
+          <option value="Yes - Standard DBS">Yes - Standard DBS</option>
+        </select>
+      </div>
+    </div>
 
- <button type="submit" class="btn-submit">Submit Volunteer Application</button>
- </form>
- <div id="status-vol-reg" class="status-msg"></div>
- </section>
+    <div class="form-group">
+      <label for="vr_experience">Relevant Experience, Qualifications or Notes:</label>
+      <textarea id="vr_experience" rows="2" placeholder="e.g. First aid qualified, athletics leader certification, group fitness experience"></textarea>
+    </div>
+
+    <div class="privacy-notice-box">
+      <strong>UK GDPR & Safeguarding Notice:</strong> Personal details provided in this registration form will be processed by Stride Together CIC solely for volunteer onboarding, safeguarding, and session coordination in accordance with our Privacy Policy.
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-item">
+        <input type="checkbox" id="vr_agreedHandbook" required>
+        <span>I confirm agreement and explicit consent for UK GDPR data processing, media preferences. I am 18+ or have parent/guardian consent. I confirm I have accessed and will comply with the Stride Together Volunteer Handbook (link above). *</span>
+      </label>
+    </div>
+
+    <button type="submit" class="btn-submit">Submit Volunteer Application</button>
+  </form>
+  <div id="status-vol-reg" class="status-msg"></div>
+</section>
 
  <!-- TAB 3: PARTICIPANT REGISTRATION & PAR-Q FORM -->
  <section id="view-health-check" class="section-card">
@@ -1596,9 +1614,9 @@
 
  <!-- TAB: ACCIDENT & INCIDENT LOG FORM -->
  <section id="view-accident-log" class="section-card">
- <h2>Digital Accident & Incident Book</h2>
+ <h2>First Aid, Digital Accident & Incident Book</h2>
  <p style="margin-bottom: 1.25rem; color: #475569;">
- Record any accidents, injuries, or near-misses occurring during Stride Together CIC activities in compliance with health, safety, and insurance standards.
+ Record any first aid administered, accidents, injuries, or near-misses occurring during Stride Together CIC activities in compliance with health, safety, and insurance standards.
  </p>
 
  <form onsubmit="submitForm(event, 'accidentLog', 'status-acc')">
@@ -1648,12 +1666,12 @@
  <input type="text" id="acc_reportedTo" placeholder="e.g. Yes - Liam notified" required>
  </div>
  <div class="form-group">
- <label for="acc_followUp">Follow-Up Action *</label>
- <input type="text" id="acc_followUp" placeholder="e.g. Kerb hazard highlighted in pre-run briefing" required>
+ <label for="acc_followUp">Follow-Up Action / First Aid Kit Restock *</label>
+ <input type="text" id="acc_followUp" placeholder="e.g. Kerb hazard highlighted in pre-run briefing, wipe used - first aid kit restock required" required>
  </div>
  </div>
 
- <button type="submit" class="btn-submit">Submit Accident Report</button>
+ <button type="submit" class="btn-submit">Submit Accident / Incident Report</button>
  </form>
  <div id="status-acc" class="status-msg"></div>
  </section>
