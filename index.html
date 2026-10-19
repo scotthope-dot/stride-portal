@@ -1042,12 +1042,12 @@
   
   <!-- VOLUNTEER HANDBOOK PROMINENT CALLOUT BOX -->
   <div style="background-color: #E0F2FE; border: 1px solid #BAE6FD; border-left: 5px solid var(--accent-teal); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-    <div>
-      <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.25rem;">📖 Stride Together Volunteer Handbook</h3>
-      <p style="font-size: 0.9rem; color: #0369A1; margin: 0;">Please review our volunteer guidance, safety procedures, and role expectations prior to joining our team.</p>
-    </div>
-    <a href="https://drive.google.com/file/d/1RpqUnUbLN7bVHNkJaDI2FDBBBWSwv8hH/view?usp=sharing" target="_blank" class="btn-submit" style="white-space: nowrap; font-size: 0.9rem; padding: 0.5rem 1.25rem; width: auto;">View Volunteer Handbook ↗</a>style="white-space: nowrap; font-size: 0.9rem; padding: 0.5rem 1.25rem;">View Volunteer Handbook ↗</a>
+  <div>
+    <h3 style="color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 0.25rem;">📖 Stride Together Volunteer Handbook</h3>
+    <p style="font-size: 0.9rem; color: #0369A1; margin: 0;">Please review our volunteer guidance, safety procedures, and role expectations prior to joining our team.</p>
   </div>
+  <a href="https://drive.google.com/file/d/1RpqUnUbLN7bVHNkJaDI2FDBBBWSwv8hH/view?usp=sharing" target="_blank" class="btn-submit" style="white-space: nowrap; font-size: 0.9rem; padding: 0.5rem 1.25rem; width: auto; text-decoration: none; display: inline-block; text-align: center;">View Volunteer Handbook ↗</a>
+</div>
 
   <form onsubmit="submitForm(event, 'volunteerReg', 'status-vol-reg')">
     <h3 style="color: var(--primary-navy); margin-bottom: 1rem;">Personal Details</h3>
@@ -2143,7 +2143,7 @@ const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer
  });
  }
 
- async function loadDashboardData(forceRefresh = false) {
+async function loadDashboardData(forceRefresh = false) {
  const CACHE_KEY = 'stride_dash_data';
  const CACHE_TIME_KEY = 'stride_dash_time';
  const CACHE_DURATION = 5 * 60 * 1000;
@@ -2151,8 +2151,11 @@ const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer
  const cachedData = localStorage.getItem(CACHE_KEY);
  const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
 
+ // Use cache if available and not forcing refresh
  if (!forceRefresh && cachedData && cachedTime && (Date.now() - cachedTime < CACHE_DURATION)) {
+ try {
  rawDashboardData = JSON.parse(cachedData);
+ if (rawDashboardData && rawDashboardData.length > 0) {
  populateMonthDropdown(rawDashboardData);
  renderSessionsTable(rawDashboardData);
  applyFilters();
@@ -2160,14 +2163,21 @@ const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer
  document.getElementById('dash-content').style.display = 'block';
  return;
  }
+ } catch (e) {
+ localStorage.removeItem(CACHE_KEY);
+ }
+ }
 
  document.getElementById('dash-loading').style.display = 'flex';
  document.getElementById('dash-content').style.display = 'none';
 
  try {
- const response = await fetch(WEB_APP_URL);
- const result = await response.json();
+ const response = await fetch(WEB_APP_URL, { redirect: "follow" });
+ const text = await response.text();
  
+ // Ensure response is valid JSON before attempting parse
+ if (text.trim().startsWith('{') || text.trim().startsWith('[')) {
+ const result = JSON.parse(text);
  if (result.data) {
  rawDashboardData = (result.data || []).filter(row => 
  row['Session Date'] || row['Group / Activity'] || row['Location'] || row['Month'] || row['Timestamp']
@@ -2181,9 +2191,31 @@ const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer
  applyFilters();
  document.getElementById('dash-loading').style.display = 'none';
  document.getElementById('dash-content').style.display = 'block';
+ return;
+ }
+ }
+ 
+ // If JSON response was empty or malformed but cached data exists, fallback silently
+ if (cachedData) {
+ rawDashboardData = JSON.parse(cachedData);
+ populateMonthDropdown(rawDashboardData);
+ renderSessionsTable(rawDashboardData);
+ applyFilters();
+ document.getElementById('dash-loading').style.display = 'none';
+ document.getElementById('dash-content').style.display = 'block';
  }
  } catch (err) {
- document.getElementById('dash-loading').innerHTML = '<span style="color: #991B1B;">Error loading dashboard data: ' + err.toString() + '</span>';
+ // Silent fallback to local cache on error if available
+ if (cachedData) {
+ rawDashboardData = JSON.parse(cachedData);
+ populateMonthDropdown(rawDashboardData);
+ renderSessionsTable(rawDashboardData);
+ applyFilters();
+ document.getElementById('dash-loading').style.display = 'none';
+ document.getElementById('dash-content').style.display = 'block';
+ } else {
+ document.getElementById('dash-loading').innerHTML = '<span style="color: #991B1B;">Unable to fetch dashboard data. Please try clicking "Refresh Data".</span>';
+ }
  }
  }
 
