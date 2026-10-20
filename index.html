@@ -745,6 +745,7 @@
        <button class="nav-btn" onclick="switchView(this, 'volunteer')">[Form] Sessions Log</button>
        <button class="nav-btn" onclick="switchView(this, 'volunteer-reg')">[Form] Volunteer Registration</button>
        <button class="nav-btn" onclick="switchView(this, 'accident-log')">[Form] Accident Log</button>
+<button class="nav-btn" onclick="switchView(this, 'safeguarding')">[Form] Safeguarding Log</button>
        <button class="nav-btn" onclick="switchView(this, 'staff')">[Form] Grant Spend</button>
        <button class="nav-btn" onclick="switchView(this, 'board')">[Form] Governance Log</button>
        <button class="nav-btn" onclick="switchView(this, 'merch')">Merch Store</button>
@@ -1662,6 +1663,131 @@
  <div id="status-acc" class="status-msg"></div>
  </section>
 
+<!-- TAB: SAFEGUARDING & CONCERNS LOG FORM -->
+<section id="view-safeguarding" class="section-card">
+  <h2>Designated Safeguarding & Concerns Reporting Log</h2>
+  <div class="privacy-notice-box" style="background-color: #FEF2F2; border-color: #FCA5A5; color: #991B1B;">
+    <strong>Confidential Safeguarding Report:</strong> This form is for logging disclosures, child/adult safeguarding concerns, or serious safety incidents. Submissions are transmitted directly and securely to the Designated Safeguarding Lead (DSL) and Board Directors in compliance with UK GDPR Special Category Data standards.
+  </div>
+
+  <form onsubmit="submitForm(event, 'safeguardingLog', 'status-sg')">
+    <h3 style="color: var(--primary-navy); margin-bottom: 1rem;">Section 1: Incident & Concern Context</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="sg_dateTime">Date & Time of Incident / Concern *</label>
+        <input type="datetime-local" id="sg_dateTime" required>
+      </div>
+      <div class="form-group">
+        <label for="sg_location">Location / Session *</label>
+        <select id="sg_location" required>
+          <option value="Dover Wednesday Run / Walk Club">Dover Wednesday Run / Walk Club</option>
+          <option value="Dover Tuesday Hyrox">Dover Tuesday Hyrox</option>
+          <option value="Dover Saturday ParkRun">Dover Saturday ParkRun</option>
+          <option value="Folkestone Session">Folkestone Session</option>
+          <option value="Thanet Session">Thanet Session</option>
+          <option value="Online / Social Media Channel">Online / Social Media Channel</option>
+          <option value="Other / Non-Session Context">Other / Non-Session Context</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="sg_concernType">Category of Concern *</label>
+        <select id="sg_concernType" required>
+          <option value="Child Safeguarding Concern">Child Safeguarding Concern</option>
+          <option value="Adult at Risk / Vulnerable Adult Concern">Adult at Risk / Vulnerable Adult Concern</option>
+          <option value="Disclosure by Participant">Disclosure by Participant</option>
+          <option value="Bullying / Harassment / Discrimination">Bullying / Harassment / Discrimination</option>
+          <option value="Unsafe Behaviour / Practice">Unsafe Behaviour / Practice</option>
+          <option value="Other Safety Concern">Other Safety Concern</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="sg_personRole">Role of Person(s) At Risk *</label>
+        <select id="sg_personRole" required>
+          <option value="Participant (Adult)">Participant (Adult)</option>
+          <option value="Participant (Youth / SEND)">Participant (Youth / SEND)</option>
+          <option value="Volunteer / Session Lead">Volunteer / Session Lead</option>
+          <option value="Member of Public">Member of Public</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 2: Individuals Involved & Description</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="sg_personAtRiskName">Name(s) of Individual(s) Concerned / At Risk</label>
+        <input type="text" id="sg_personAtRiskName" placeholder="Leave blank if unknown or requested confidential">
+      </div>
+      <div class="form-group">
+        <label for="sg_allegedSubject">Name of Alleged Subject / Perpetrator (if applicable)</label>
+        <input type="text" id="sg_allegedSubject" placeholder="e.g. Name of individual involved">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="sg_description">Detailed Description of Concern or Disclosure *</label>
+      <textarea id="sg_description" rows="4" placeholder="Record clear, objective facts (who, what, where, when, exact words spoken). Avoid personal opinion..." required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="sg_immediateAction">Immediate Actions Taken On Site</label>
+      <textarea id="sg_immediateAction" rows="2" placeholder="e.g. Separated parties, offered immediate support, reassured individual..."></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="sg_externalAgencies">Were External Agencies / Emergency Services Contacted? *</label>
+        <select id="sg_externalAgencies" required>
+          <option value="No">No</option>
+          <option value="Yes - Police (999/101)">Yes - Police (999/101)</option>
+          <option value="Yes - Local Authority Social Care / LADO">Yes - Local Authority Social Care / LADO</option>
+          <option value="Yes - NHS / Ambulance Service">Yes - NHS / Ambulance Service</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="sg_agencyRef">Agency Reference / Incident Number (if applicable)</label>
+        <input type="text" id="sg_agencyRef" placeholder="e.g. CAD-123456 or Social Care Ref">
+      </div>
+    </div>
+
+    <h3 style="color: var(--primary-navy); margin: 1.25rem 0 0.75rem 0;">Section 3: Reporting Party Details</h3>
+    <div class="form-row">
+  <div class="form-group">
+    <label for="sg_reporterName">Reporter Name (Leave blank to remain anonymous)</label>
+    <input type="text" id="sg_reporterName" placeholder="e.g. John Doe or Anonymous">
+  </div>
+  <div class="form-group">
+    <label for="sg_reporterRole">Reporter Role (Optional)</label>
+    <select id="sg_reporterRole">
+      <option value="Prefer Not to Say / Anonymous" selected>Prefer Not to Say / Anonymous</option>
+      <option value="Session Staff / Volunteer">Session Staff / Volunteer</option>
+      <option value="Participant / Community Member">Participant / Community Member</option>
+      <option value="Board Member">Board Member</option>
+      <option value="External / Other">External / Other</option>
+    </select>
+  </div>
+</div>
+
+    <div class="form-group">
+      <label for="sg_reporterContact">Reporter Phone / Email (Optional, for DSL follow-up)</label>
+      <input type="text" id="sg_reporterContact" placeholder="e.g. 07123456789 / email@example.com">
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-item">
+        <input type="checkbox" id="sg_declaration" required>
+        <span>I confirm the details provided are accurate to the best of my knowledge and acknowledge that this report will be transmitted confidentially to the Designated Safeguarding Lead. *</span>
+      </label>
+    </div>
+
+    <button type="submit" class="btn-submit" style="background-color: #991B1B;">Submit Confidential Safeguarding Report</button>
+  </form>
+  <div id="status-sg" class="status-msg"></div>
+</section>
+
  <!-- TAB 8: STRIDE TOGETHER MULTI-ITEM MERCHANDISE STORE -->
  <section id="view-merch" class="section-card">
  <h2>Stride Together CIC Community Store</h2>
@@ -2043,8 +2169,7 @@ function unlockInternalAccess() {
  }
 
  function switchView(btn, viewName) {
-const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer-reg', 'health-check', 'feedback', 'staff', 'board', 'accident-log', 'merch'];
-
+const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer-reg', 'health-check', 'feedback', 'staff', 'board', 'accident-log', 'merch', 'safeguarding'];
  views.forEach(v => {
  const el = document.getElementById('view-' + v);
  if (el) {
@@ -2511,6 +2636,22 @@ async function loadDashboardData(forceRefresh = false) {
  payload.signature = document.getElementById('hc_signature').value;
  payload.declarationDate = document.getElementById('hc_declarationDate').value;
  } 
+// ADD THIS ELSE IF BLOCK INSIDE submitForm():
+else if (formType === 'safeguardingLog') {
+  payload.dateTime = document.getElementById('sg_dateTime').value;
+  payload.location = document.getElementById('sg_location').value;
+  payload.concernType = document.getElementById('sg_concernType').value;
+  payload.personRole = document.getElementById('sg_personRole').value;
+  payload.personAtRiskName = document.getElementById('sg_personAtRiskName').value || 'Confidential / Unknown';
+  payload.allegedSubject = document.getElementById('sg_allegedSubject').value || 'N/A';
+  payload.description = document.getElementById('sg_description').value;
+  payload.immediateAction = document.getElementById('sg_immediateAction').value || 'None recorded';
+  payload.externalAgencies = document.getElementById('sg_externalAgencies').value;
+  payload.agencyRef = document.getElementById('sg_agencyRef').value || 'N/A';
+  payload.reporterName = document.getElementById('sg_reporterName').value || 'Anonymous';
+  payload.reporterRole = document.getElementById('sg_reporterRole').value;
+  payload.reporterContact = document.getElementById('sg_reporterContact').value || 'Not provided';
+}
 else if (formType === 'volunteerReg') {
     payload.fullName = document.getElementById('vr_fullName').value;
     payload.email = document.getElementById('vr_email').value;
