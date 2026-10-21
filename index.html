@@ -882,6 +882,17 @@
  <button class="btn-submit" style="width: auto; padding: 0.5rem 1rem; font-size: 0.88rem;" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Register / Join Session</button>
  </div>
  </div>
+   <div class="session-item-card" data-location="Dover" data-activity="Cycling Group">
+ <div>
+ <span style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px;">FREE COMMUNITY SESSION • DOVER</span>
+ <h4 style="color: var(--primary-navy); font-size: 1.1rem; margin: 0.3rem 0;">Cycling Club</h4>
+ <p style="font-size: 0.88rem; color: #64748B;">📍 Meeting Point: TBC | ⏰ Sunday 09:00 | Lead: Ais / Juste</p>
+ <p style="font-size: 0.8rem; color: #166534; font-weight: 600; margin-top: 0.2rem;">100% Free • Open to all abilities</p>
+ </div>
+ <div>
+ <button class="btn-submit" style="width: auto; padding: 0.5rem 1rem; font-size: 0.88rem;" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Register / Join Session</button>
+ </div>
+ </div>
  </div>
 
 <h3 style="color: var(--primary-navy); margin: 2rem 0 0.5rem 0;">Monthly Session Calendar Overview</h3>
@@ -1110,10 +1121,10 @@
  <div class="form-group">
  <label for="sess_loggedBy">Session Logged By</label>
  <select id="sess_loggedBy" required>
- <option value="Liam">Liam</option>
+ <option value="Liam">Scott</option>
  <option value="Jo">Jo</option>
  <option value="Juste">Juste</option>
- <option value="Scott">Scott</option>
+ <option value="Scott">Liam</option>
  </select>
  </div>
  </div>
@@ -2045,71 +2056,77 @@
  <script>
 
 function renderUpcomingCalendar() {
- const grid = document.getElementById('calendarGrid');
- if (!grid) return;
+  const grid = document.getElementById('calendarGrid');
+  if (!grid) return;
 
- // Set baseline to current date (October 19, 2026)
- const today = new Date(2026, 9, 19); 
- const currentYear = today.getFullYear();
- const currentMonth = today.getMonth(); // 9 = October
- const startDay = today.getDate(); // 19
- const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate(); // 31
+  const today = new Date(); 
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth(); 
+  const startDay = today.getDate(); 
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate(); 
 
- // Align first cell to correct weekday column (0 = Mon, 6 = Sun)
- let startDayOfWeek = today.getDay() - 1;
- if (startDayOfWeek === -1) startDayOfWeek = 6;
+  // Align starting day (e.g. today) to the correct column (0 = Mon, 6 = Sun)
+  const todayObj = new Date(currentYear, currentMonth, startDay);
+  let startDayOfWeek = todayObj.getDay() - 1;
+  if (startDayOfWeek === -1) startDayOfWeek = 6; // Shift Sunday from -1 to 6
 
- // Clear existing cells, keep day headers
- grid.innerHTML = `
- <div class="calendar-day-header">Mon</div>
- <div class="calendar-day-header">Tue</div>
- <div class="calendar-day-header">Wed</div>
- <div class="calendar-day-header">Thu</div>
- <div class="calendar-day-header">Fri</div>
- <div class="calendar-day-header">Sat</div>
- <div class="calendar-day-header">Sun</div>
- `;
+  // Clear existing cells, set day headers
+  grid.innerHTML = `
+    <div class="calendar-day-header">Mon</div>
+    <div class="calendar-day-header">Tue</div>
+    <div class="calendar-day-header">Wed</div>
+    <div class="calendar-day-header">Thu</div>
+    <div class="calendar-day-header">Fri</div>
+    <div class="calendar-day-header">Sat</div>
+    <div class="calendar-day-header">Sun</div>
+  `;
 
- // Insert blank offset cells
- for (let i = 0; i < startDayOfWeek; i++) {
- const emptyCell = document.createElement('div');
- emptyCell.className = 'calendar-day-cell';
- emptyCell.style.background = '#F1F5F9';
- grid.appendChild(emptyCell);
- }
+  // Insert blank offset cells to align the starting date under its correct weekday column
+  for (let i = 0; i < startDayOfWeek; i++) {
+    const emptyCell = document.createElement('div');
+    emptyCell.className = 'calendar-day-cell';
+    emptyCell.style.background = '#F1F5F9';
+    grid.appendChild(emptyCell);
+  }
 
-// Scheduled weekly community sessions
- const scheduledEvents = {
- 2: ["19:00 Hyrox (Legion)"], // Tuesdays
- 3: [
- "18:00 Run Club (Dover)",
- "18:00 Walk Club (Dover)",
- "18:00 Teenage Club (Dover)"
- ], // Wednesdays
- 6: ["08:45 ParkRun (Dover)"] // Saturdays
- };
+  // Scheduled weekly community sessions (0 = Sun, 1 = Mon, ..., 6 = Sat)
+  const scheduledEvents = {
+    0: ["09:00 Cycling Club (Dover)"], // Sunday
+    2: ["19:00 Hyrox (Legion)"],        // Tuesday
+    3: [                                 // Wednesday
+      "18:00 Run Club (Dover)",
+      "18:00 Walk Club (Dover)",
+      "18:00 Teenage Club (Dover)"
+    ], 
+    6: ["08:45 ParkRun (Dover)"]         // Saturday
+  };
 
- // Render remaining days of the month
- for (let day = startDay; day <= lastDayOfMonth; day++) {
- const dateObj = new Date(currentYear, currentMonth, day);
- let dayOfWeek = dateObj.getDay(); 
+  // Render remaining days from today until end of month
+  for (let day = startDay; day <= lastDayOfMonth; day++) {
+    const dateObj = new Date(currentYear, currentMonth, day);
+    const dayOfWeek = dateObj.getDay(); // 0 = Sun, 1 = Mon, ...
 
- const cell = document.createElement('div');
- cell.className = 'calendar-day-cell';
+    const cell = document.createElement('div');
+    cell.className = 'calendar-day-cell';
 
- let cellHtml = `<span class="calendar-day-number">${day}</span>`;
- if (scheduledEvents[dayOfWeek]) {
- cellHtml += `<div class="calendar-event-tag">${scheduledEvents[dayOfWeek]}</div>`;
- }
+    let cellHtml = `<span class="calendar-day-number">${day}</span>`;
+    
+    // Map array of events into individual HTML tags
+    if (scheduledEvents[dayOfWeek]) {
+      const tags = scheduledEvents[dayOfWeek]
+        .map(evt => `<div class="calendar-event-tag">${evt}</div>`)
+        .join('');
+      cellHtml += tags;
+    }
 
- cell.innerHTML = cellHtml;
- grid.appendChild(cell);
- }
- }
+    cell.innerHTML = cellHtml;
+    grid.appendChild(cell);
+  }
+}
 
- window.addEventListener('load', () => {
- renderUpcomingCalendar();
- });
+window.addEventListener('load', () => {
+  renderUpcomingCalendar();
+});
 
 function unlockInternalAccess() {
    const password = prompt("Enter Internal Operations Password:");
