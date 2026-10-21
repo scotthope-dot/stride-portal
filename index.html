@@ -39,15 +39,30 @@
  gap: 1rem;
  }
 
- .brand-logo {
- height: 48px;
- width: 48px;
- border-radius: 6px;
- object-fit: contain;
- background-color: white;
- padding: 2px;
- }
+ /* Header Logo */
+.brand-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
 
+/* Hero Logo */
+.hero-logo-large {
+  height: 96px;
+  width: auto;
+  object-fit: contain;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin-bottom: 0.75rem;
+}
  .brand h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.2; }
  .brand span { color: var(--accent-teal); }
 
@@ -97,6 +112,61 @@
  border-color: var(--primary-navy);
  }
 
+
+/* Container aligning top of logo with top of text */
+.hero-header-row {
+  display: flex;
+  align-items: flex-start; /* Aligns top edge of logo with top edge of text */
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.hero-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Updated Hero Logo */
+.hero-logo-large {
+  height: 90px !important;
+  width: auto !important;
+  object-fit: contain;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin-top: 0 !important;   /* Ensures no top displacement */
+  margin-bottom: 0 !important;
+  flex-shrink: 0;
+}
+
+/* Tighten top margins on tagline text */
+.hero-tagline {
+  margin-top: 0 !important;   /* Flushes text baseline to match top of logo */
+  margin-bottom: 0.25rem !important;
+  line-height: 1.15;
+}
+
+.hero-subtitle {
+  margin-bottom: 0 !important;
+}
+
+/* Mobile fallback: Stack and center on small screens */
+@media (max-width: 768px) {
+  .hero-header-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .hero-logo-large {
+    height: 65px !important;
+  }
+}
  /* HERO BANNER */
  /* NEW COMPACT HERO CSS */
 .hero-banner {
@@ -112,13 +182,13 @@
 }
 
 .hero-logo-large {
-  height: 54px; /* Reduced from 80px */
-  width: 54px;
+  height: 64px;
+  width: 64px;
   object-fit: contain;
-  background-color: white;
+  background-color: #FFFFFF;
   border-radius: 8px;
-  padding: 4px;
-  margin-bottom: 0.75rem; /* Reduced from 1.25rem */
+  padding: 4px; /* Creates the white border frame */
+  margin-bottom: 0.75rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
@@ -507,20 +577,47 @@
  }
 
  /* CALENDAR & UPCOMING SESSIONS STYLES */
- .session-item-card {
- background: #FFFFFF;
- border: 1px solid var(--border-color);
- border-left: 5px solid var(--accent-teal);
- border-radius: 8px;
- padding: 1.25rem;
- margin-bottom: 1rem;
- display: flex;
- justify-content: space-between;
- align-items: center;
- flex-wrap: wrap;
- gap: 1rem;
- }
+ /* Container: Converts vertical list into a multi-column responsive grid */
+#upcomingSessionsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Automatically fits 2 to 4 columns depending on screen size */
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
 
+/* Individual Grid Card */
+.session-item-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-left: 5px solid var(--accent-teal);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 0 !important; /* Clears vertical list spacing */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Stretches card content and pins button to the bottom */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Make registration buttons stretch full-width inside grid cards */
+.session-item-card button {
+  width: 100% !important;
+  margin-top: 1rem;
+}
+
+/* Mobile responsive fallback: 1 column on smaller viewports */
+@media (max-width: 768px) {
+  #upcomingSessionsList {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+}
  .calendar-grid-container {
  display: grid;
  grid-template-columns: repeat(7, 1fr);
@@ -771,18 +868,26 @@
  </div>
  </header>
 
- <!-- HERO BANNER WITH COASTAL CLIFFS BACKGROUND & EXACT LOGO -->
- <div class="hero-banner">
- <div class="hero-content">
- <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together CIC Emblem" class="hero-logo-large" onerror="this.onerror=null; this.style.display='none';">
- <h2 class="hero-tagline">Creating communities where <span>no one Strides alone</span></h2>
- <p class="hero-subtitle">Health & Mental Wellbeing Through Community and Movement</p>
- <div class="hero-cta-group">
- <button class="btn-hero-primary" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Join a Free Session</button>
- <button class="btn-hero-secondary" onclick="switchView(document.querySelectorAll('.nav-btn')[2], 'feedback')">Give Feedback</button>
- </div>
- </div>
- </div>
+ <!-- HERO BANNER WITH COASTAL CLIFFS BACKGROUND & SIDE-BY-SIDE LOGO -->
+<div class="hero-banner">
+  <div class="hero-content">
+    
+    <!-- SIDE-BY-SIDE FLEX CONTAINER -->
+    <div class="hero-header-row">
+      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together CIC Emblem" class="hero-logo-large" onerror="this.onerror=null; this.style.display='none';">
+      <div class="hero-text-block">
+        <h2 class="hero-tagline">Creating communities where <span>no one Strides alone</span></h2>
+        <p class="hero-subtitle">Health & Mental Wellbeing Through Community and Movement</p>
+      </div>
+    </div>
+
+    <div class="hero-cta-group">
+      <button class="btn-hero-primary" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Join a Free Session</button>
+      <button class="btn-hero-secondary" onclick="switchView(document.querySelectorAll('.nav-btn')[2], 'feedback')">Give Feedback</button>
+    </div>
+
+  </div>
+</div>
 
 <!-- TOP NAVIGATION BAR CONTAINER -->
  <div id="navContainer" style="background-color: #F1F5F9; border-bottom: 1px solid var(--border-color); padding: 0.5rem 1rem;">
@@ -847,20 +952,7 @@
 
  <h3 style="color: var(--primary-navy); margin-bottom: 1rem;">Next Scheduled Community Sessions</h3>
  <div id="upcomingSessionsList">
- <div class="session-item-card" data-location="Dover" data-activity="Running Group Walking Group">
-  ...
-</div>
- <span style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px;">FREE COMMUNITY SESSION • DOVER</span>
- <h4 style="color: var(--primary-navy); font-size: 1.1rem; margin: 0.3rem 0;">Dover Community Run & Walk Club</h4>
- <p style="font-size: 0.88rem; color: #64748B;">📍 Meeting Point: Dover outside Rebel Coffee | ⏰ Wednesdays 18:00 Leads: Liam & Scott, Jo & Juste, Rachel </p>
- <p style="font-size: 0.8rem; color: #166534; font-weight: 600; margin-top: 0.2rem;">100% Free • Open to all abilities</p>
- </div>
- <div>
- <button class="btn-submit" style="width: auto; padding: 0.5rem 1rem; font-size: 0.88rem;" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Register / Join Session</button>
- </div>
- </div>
-
- <div class="session-item-card" data-location="Dover" data-activity="HYROX Training">
+<div class="session-item-card" data-location="Dover" data-activity="HYROX Training">
  <div>
  <span style="background: #FEF3C7; color: #92400E; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px;">SPECIALIST SESSION • DOVER</span>
  <h4 style="color: var(--primary-navy); font-size: 1.1rem; margin: 0.3rem 0;">HYROX Class</h4>
@@ -871,7 +963,17 @@
  <button class="btn-submit" style="width: auto; padding: 0.5rem 1rem; font-size: 0.88rem;" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Register / Join Session</button>
  </div>
  </div>
-
+ <div class="session-item-card" data-location="Dover" data-activity="Running Group">
+ <div>
+ <span style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px;">FREE COMMUNITY SESSION • DOVER</span>
+ <h4 style="color: var(--primary-navy); font-size: 1.1rem; margin: 0.3rem 0;">Dover Community Run & Walk Club</h4>
+ <p style="font-size: 0.88rem; color: #64748B;">📍 Meeting Point: Dover outside Rebel Coffee | ⏰ Wednesdays 18:00 Leads: Liam & Scott, Jo & Juste, Rachel </p>
+ <p style="font-size: 0.8rem; color: #166534; font-weight: 600; margin-top: 0.2rem;">100% Free • Open to all abilities</p>
+ </div>
+ <div>
+ <button class="btn-submit" style="width: auto; padding: 0.5rem 1rem; font-size: 0.88rem;" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Register / Join Session</button>
+ </div>
+ </div>
  <div class="session-item-card" data-location="Dover" data-activity="ParkRun Group">
  <div>
  <span style="background: #E0F2FE; color: #0369A1; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px;">FREE COMMUNITY SESSION • DOVER</span>
@@ -2102,27 +2204,33 @@ function renderUpcomingCalendar() {
     6: ["08:45 ParkRun (Dover)"]         // Saturday
   };
 
-  // Render remaining days from today until end of month
-  for (let day = startDay; day <= lastDayOfMonth; day++) {
-    const dateObj = new Date(currentYear, currentMonth, day);
-    const dayOfWeek = dateObj.getDay(); // 0 = Sun, 1 = Mon, ...
+  // Render remaining days of the month
+for (let day = startDay; day <= lastDayOfMonth; day++) {
+  const dateObj = new Date(currentYear, currentMonth, day);
+  let dayOfWeek = dateObj.getDay(); 
 
-    const cell = document.createElement('div');
-    cell.className = 'calendar-day-cell';
+  const cell = document.createElement('div');
+  cell.className = 'calendar-day-cell';
 
-    let cellHtml = `<span class="calendar-day-number">${day}</span>`;
-    
-    // Map array of events into individual HTML tags
-    if (scheduledEvents[dayOfWeek]) {
-      const tags = scheduledEvents[dayOfWeek]
-        .map(evt => `<div class="calendar-event-tag">${evt}</div>`)
-        .join('');
-      cellHtml += tags;
-    }
-
-    cell.innerHTML = cellHtml;
-    grid.appendChild(cell);
+  // Highlight the current date in light green (#DCFCE7) with a dark green border
+  const realToday = new Date();
+  if (
+    day === realToday.getDate() &&
+    currentMonth === realToday.getMonth() &&
+    currentYear === realToday.getFullYear()
+  ) {
+    cell.style.backgroundColor = '#DCFCE7'; // Soft light green
+    cell.style.borderColor = '#86EFAC';     // Matching green border outline
   }
+
+  let cellHtml = `<span class="calendar-day-number">${day}</span>`;
+  if (scheduledEvents[dayOfWeek]) {
+    cellHtml += `<div class="calendar-event-tag">${scheduledEvents[dayOfWeek]}</div>`;
+  }
+
+  cell.innerHTML = cellHtml;
+  grid.appendChild(cell);
+}
 }
 
 window.addEventListener('load', () => {
@@ -2275,36 +2383,26 @@ const views = ['upcoming', 'dashboard', 'sessions-list', 'volunteer', 'volunteer
  }
  }
 
-function filterUpcomingSchedule() {
-  const locVal = document.getElementById('schedLocFilter').value;
-  const actVal = document.getElementById('schedActivityFilter').value;
-  const cards = document.querySelectorAll('.session-item-card');
+ function filterUpcomingSchedule() {
+ const locVal = document.getElementById('schedLocFilter').value;
+ const actVal = document.getElementById('schedActivityFilter').value;
+ const cards = document.querySelectorAll('.session-item-card');
 
-  cards.forEach(card => {
-    const cardLoc = card.getAttribute('data-location') || '';
-    const cardAct = card.getAttribute('data-activity') || '';
+ cards.forEach(card => {
+ const cardLoc = card.getAttribute('data-location');
+ const cardAct = card.getAttribute('data-activity');
 
-    // Check location match
-    const matchesLoc = (locVal === 'ALL' || cardLoc === locVal);
+ const matchesLoc = (locVal === 'ALL' || cardLoc === locVal);
+ const matchesAct = (actVal === 'ALL' || cardAct === actVal);
 
-    // Check activity match (handles combined Running/Walking group)
-    let matchesAct = false;
-    if (actVal === 'ALL') {
-      matchesAct = true;
-    } else if (actVal === 'Walking Group' || actVal === 'Running Group') {
-      matchesAct = cardAct.includes('Running Group') || cardAct.includes('Walking Group');
-    } else {
-      matchesAct = (cardAct === actVal);
-    }
+ if (matchesLoc && matchesAct) {
+ card.style.display = 'flex';
+ } else {
+ card.style.display = 'none';
+ }
+ });
+ }
 
-    // Display or hide card
-    if (matchesLoc && matchesAct) {
-      card.style.display = 'flex';
-    } else {
-      card.style.display = 'none';
-    }
-  });
-}
 function calcNewParticipants() {
  const total = parseInt(document.getElementById('sess_totalParts').value) || 0;
  const returning = parseInt(document.getElementById('sess_returningParts').value) || 0;
