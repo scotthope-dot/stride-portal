@@ -39,15 +39,30 @@
  gap: 1rem;
  }
 
- .brand-logo {
- height: 48px;
- width: 48px;
- border-radius: 6px;
- object-fit: contain;
- background-color: white;
- padding: 2px;
- }
+ /* Header Logo */
+.brand-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
 
+/* Hero Logo */
+.hero-logo-large {
+  height: 96px;
+  width: auto;
+  object-fit: contain;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin-bottom: 0.75rem;
+}
  .brand h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.2; }
  .brand span { color: var(--accent-teal); }
 
@@ -97,6 +112,61 @@
  border-color: var(--primary-navy);
  }
 
+
+/* Container aligning top of logo with top of text */
+.hero-header-row {
+  display: flex;
+  align-items: flex-start; /* Aligns top edge of logo with top edge of text */
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.hero-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Updated Hero Logo */
+.hero-logo-large {
+  height: 90px !important;
+  width: auto !important;
+  object-fit: contain;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin-top: 0 !important;   /* Ensures no top displacement */
+  margin-bottom: 0 !important;
+  flex-shrink: 0;
+}
+
+/* Tighten top margins on tagline text */
+.hero-tagline {
+  margin-top: 0 !important;   /* Flushes text baseline to match top of logo */
+  margin-bottom: 0.25rem !important;
+  line-height: 1.15;
+}
+
+.hero-subtitle {
+  margin-bottom: 0 !important;
+}
+
+/* Mobile fallback: Stack and center on small screens */
+@media (max-width: 768px) {
+  .hero-header-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .hero-logo-large {
+    height: 65px !important;
+  }
+}
  /* HERO BANNER */
  /* NEW COMPACT HERO CSS */
 .hero-banner {
@@ -112,13 +182,13 @@
 }
 
 .hero-logo-large {
-  height: 54px; /* Reduced from 80px */
-  width: 54px;
+  height: 64px;
+  width: 64px;
   object-fit: contain;
-  background-color: white;
+  background-color: #FFFFFF;
   border-radius: 8px;
-  padding: 4px;
-  margin-bottom: 0.75rem; /* Reduced from 1.25rem */
+  padding: 4px; /* Creates the white border frame */
+  margin-bottom: 0.75rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
@@ -771,18 +841,26 @@
  </div>
  </header>
 
- <!-- HERO BANNER WITH COASTAL CLIFFS BACKGROUND & EXACT LOGO -->
- <div class="hero-banner">
- <div class="hero-content">
- <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together CIC Emblem" class="hero-logo-large" onerror="this.onerror=null; this.style.display='none';">
- <h2 class="hero-tagline">Creating communities where <span>no one Strides alone</span></h2>
- <p class="hero-subtitle">Health & Mental Wellbeing Through Community and Movement</p>
- <div class="hero-cta-group">
- <button class="btn-hero-primary" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Join a Free Session</button>
- <button class="btn-hero-secondary" onclick="switchView(document.querySelectorAll('.nav-btn')[2], 'feedback')">Give Feedback</button>
- </div>
- </div>
- </div>
+ <!-- HERO BANNER WITH COASTAL CLIFFS BACKGROUND & SIDE-BY-SIDE LOGO -->
+<div class="hero-banner">
+  <div class="hero-content">
+    
+    <!-- SIDE-BY-SIDE FLEX CONTAINER -->
+    <div class="hero-header-row">
+      <img src="https://lh3.googleusercontent.com/d/1376Vd_1ZPyk8vifdb_iHR1WLkdxsEXJZ" alt="Stride Together CIC Emblem" class="hero-logo-large" onerror="this.onerror=null; this.style.display='none';">
+      <div class="hero-text-block">
+        <h2 class="hero-tagline">Creating communities where <span>no one Strides alone</span></h2>
+        <p class="hero-subtitle">Health & Mental Wellbeing Through Community and Movement</p>
+      </div>
+    </div>
+
+    <div class="hero-cta-group">
+      <button class="btn-hero-primary" onclick="switchView(document.querySelectorAll('.nav-btn')[5], 'health-check')">Join a Free Session</button>
+      <button class="btn-hero-secondary" onclick="switchView(document.querySelectorAll('.nav-btn')[2], 'feedback')">Give Feedback</button>
+    </div>
+
+  </div>
+</div>
 
 <!-- TOP NAVIGATION BAR CONTAINER -->
  <div id="navContainer" style="background-color: #F1F5F9; border-bottom: 1px solid var(--border-color); padding: 0.5rem 1rem;">
