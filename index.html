@@ -2179,27 +2179,33 @@ function renderUpcomingCalendar() {
     6: ["08:45 ParkRun (Dover)"]         // Saturday
   };
 
-  // Render remaining days from today until end of month
-  for (let day = startDay; day <= lastDayOfMonth; day++) {
-    const dateObj = new Date(currentYear, currentMonth, day);
-    const dayOfWeek = dateObj.getDay(); // 0 = Sun, 1 = Mon, ...
+  // Render remaining days of the month
+for (let day = startDay; day <= lastDayOfMonth; day++) {
+  const dateObj = new Date(currentYear, currentMonth, day);
+  let dayOfWeek = dateObj.getDay(); 
 
-    const cell = document.createElement('div');
-    cell.className = 'calendar-day-cell';
+  const cell = document.createElement('div');
+  cell.className = 'calendar-day-cell';
 
-    let cellHtml = `<span class="calendar-day-number">${day}</span>`;
-    
-    // Map array of events into individual HTML tags
-    if (scheduledEvents[dayOfWeek]) {
-      const tags = scheduledEvents[dayOfWeek]
-        .map(evt => `<div class="calendar-event-tag">${evt}</div>`)
-        .join('');
-      cellHtml += tags;
-    }
-
-    cell.innerHTML = cellHtml;
-    grid.appendChild(cell);
+  // Highlight the current date in light green (#DCFCE7) with a dark green border
+  const realToday = new Date();
+  if (
+    day === realToday.getDate() &&
+    currentMonth === realToday.getMonth() &&
+    currentYear === realToday.getFullYear()
+  ) {
+    cell.style.backgroundColor = '#DCFCE7'; // Soft light green
+    cell.style.borderColor = '#86EFAC';     // Matching green border outline
   }
+
+  let cellHtml = `<span class="calendar-day-number">${day}</span>`;
+  if (scheduledEvents[dayOfWeek]) {
+    cellHtml += `<div class="calendar-event-tag">${scheduledEvents[dayOfWeek]}</div>`;
+  }
+
+  cell.innerHTML = cellHtml;
+  grid.appendChild(cell);
+}
 }
 
 window.addEventListener('load', () => {
